@@ -1,5 +1,13 @@
 # changelog-github-custom
 
+## 1.0.0
+
+### Major Changes
+
+- [`54aad11`](https://github.com/sapientpants/changelog-github-custom/commit/54aad111564b1b07115efb92bf00e06923b7751a) - Reset version to 0.0.1 for initial public release
+
+  This is a major change as we're resetting the version numbering scheme from 0.22.1 to 0.0.1 to prepare for the initial public npm release.
+
 ## 0.0.1
 
 ### Initial Release
