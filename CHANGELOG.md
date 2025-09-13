@@ -1,5 +1,11 @@
 # changelog-github-custom
 
+## 0.22.2
+
+### Patch Changes
+
+- [`8d36651`](https://github.com/sapientpants/changelog-github-custom/commit/8d366518b7dcf9cf05ccaf1e14050d94d21caa24) - Add repository field to package.json for better npm metadata and remove private field to allow npm publishing
+
 ## 0.22.1
 
 ### Patch Changes

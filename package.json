@@ -1,6 +1,6 @@
 {
   "name": "changelog-github-custom",
-  "version": "0.22.1",
+  "version": "0.22.2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sapientpants/changelog-github-custom.git"
