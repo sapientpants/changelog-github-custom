@@ -11,19 +11,19 @@ on:
   workflow_call:
     inputs:
       node-version:
-        description: "Node.js version to install (should match package.json engines)"
+        description: 'Node.js version to install (should match package.json engines)'
         type: string
-        default: "22" # UPDATE: When upgrading Node.js in package.json
+        default: '22' # UPDATE: When upgrading Node.js in package.json
       pnpm-version:
-        description: "pnpm version to install (should match packageManager in package.json)"
+        description: 'pnpm version to install (should match packageManager in package.json)'
         type: string
-        default: "10.15.0" # UPDATE: When upgrading pnpm in package.json
+        default: '10.15.0' # UPDATE: When upgrading pnpm in package.json
       install-deps:
-        description: "Whether to install npm dependencies"
+        description: 'Whether to install npm dependencies'
         type: boolean
         default: true
       build:
-        description: "Whether to run the build command"
+        description: 'Whether to run the build command'
         type: boolean
         default: false
 

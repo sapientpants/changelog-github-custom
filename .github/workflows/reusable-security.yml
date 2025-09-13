@@ -11,23 +11,23 @@ on:
   workflow_call:
     inputs:
       node-version:
-        description: "Node.js version (should match package.json engines.node)"
+        description: 'Node.js version (should match package.json engines.node)'
         type: string
-        default: "22" # UPDATE: When upgrading Node.js
+        default: '22' # UPDATE: When upgrading Node.js
       pnpm-version:
-        description: "pnpm version (should match package.json packageManager)"
+        description: 'pnpm version (should match package.json packageManager)'
         type: string
-        default: "10.15.0" # UPDATE: When upgrading pnpm
+        default: '10.15.0' # UPDATE: When upgrading pnpm
       run-codeql:
-        description: "Run CodeQL static analysis for security vulnerabilities"
+        description: 'Run CodeQL static analysis for security vulnerabilities'
         type: boolean
         default: true
       run-osv-scan:
-        description: "Run OSV scanner for dependency vulnerabilities"
+        description: 'Run OSV scanner for dependency vulnerabilities'
         type: boolean
         default: true
       generate-sbom:
-        description: "Generate Software Bill of Materials (SBOM)"
+        description: 'Generate Software Bill of Materials (SBOM)'
         type: boolean
         default: false
 
@@ -143,4 +143,4 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: results.sarif
-          category: "osv-scan" # Separate category from CodeQL
+          category: 'osv-scan' # Separate category from CodeQL

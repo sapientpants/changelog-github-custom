@@ -11,16 +11,16 @@ on:
   workflow_call:
     inputs:
       node-version:
-        description: "Node.js version (should match package.json engines.node)"
+        description: 'Node.js version (should match package.json engines.node)'
         type: string
-        default: "22" # UPDATE: When upgrading Node.js
+        default: '22' # UPDATE: When upgrading Node.js
       pnpm-version:
-        description: "pnpm version (should match package.json packageManager)"
+        description: 'pnpm version (should match package.json packageManager)'
         type: string
-        default: "10.15.0" # UPDATE: When upgrading pnpm
+        default: '10.15.0' # UPDATE: When upgrading pnpm
     secrets:
       SONAR_TOKEN:
-        description: "SonarCloud authentication token"
+        description: 'SonarCloud authentication token'
         required: false
 
 # EXAMPLE USAGE:

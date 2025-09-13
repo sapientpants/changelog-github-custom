@@ -13,7 +13,7 @@ on:
   workflow_dispatch: # Manual trigger for re-publishing or testing
     inputs:
       tag:
-        description: "Release tag to publish (e.g., v1.2.3)"
+        description: 'Release tag to publish (e.g., v1.2.3)'
         required: true
         type: string
 
@@ -75,7 +75,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
           # Configure npm registry for authentication
-          registry-url: "https://registry.npmjs.org"
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         # frozen-lockfile ensures exact versions from release
@@ -151,7 +151,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
           # GitHub Packages npm registry URL
-          registry-url: "https://npm.pkg.github.com"
+          registry-url: 'https://npm.pkg.github.com'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -270,18 +270,18 @@ jobs:
         uses: aquasecurity/trivy-action@0.28.0
         with:
           image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:${{ steps.version.outputs.version }}
-          format: "sarif" # GitHub Security format
-          output: "trivy-results.sarif"
-          severity: "CRITICAL,HIGH" # Fail on serious issues
+          format: 'sarif' # GitHub Security format
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH' # Fail on serious issues
           ignore-unfixed: false # Don't ignore unfixed CVEs
-          exit-code: "1" # Fail workflow if vulnerabilities found
+          exit-code: '1' # Fail workflow if vulnerabilities found
 
       - name: Upload Trivy results to GitHub Security
         if: always() && steps.check-docker.outputs.has_credentials == 'true'
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: "trivy-results.sarif"
-          category: "container-scan"
+          sarif_file: 'trivy-results.sarif'
+          category: 'container-scan'
 
       - name: Push Docker image to Docker Hub
         # Multi-platform build and push after security scan passes
