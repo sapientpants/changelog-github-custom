@@ -1,5 +1,18 @@
 # changelog-github-custom
 
+## 1.1.0
+
+### Minor Changes
+
+- [#4](https://github.com/sapientpants/changelog-github-custom/pull/4) [`8c8eb40`](https://github.com/sapientpants/changelog-github-custom/commit/8c8eb4009004afd86b57fc5032bbebac4cc4e7ae) - feat: Add depcheck to detect and fail build on unused dependencies
+  - Added depcheck tool to validate all declared dependencies are actually used
+  - Integrated depcheck into CI/CD pipeline and pre-commit hooks
+  - Configured .depcheckrc with appropriate ignore patterns for build tools
+  - Removed unused dependencies discovered during implementation
+  - Build now fails with clear error message when unused dependencies are found
+
+  Closes #3
+
 ## 1.0.0
 
 ### Major Changes
