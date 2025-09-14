@@ -16,10 +16,12 @@
   },
   "private": false,
   "type": "module",
-  "main": "./dist/index.js",
+  "main": "./dist/src/changelog-custom.js",
   "exports": {
     ".": {
-      "import": "./dist/index.js"
+      "import": "./dist/src/changelog-custom.js",
+      "types": "./dist/src/changelog-custom.d.ts",
+      "default": "./dist/src/changelog-custom.js"
     }
   },
   "files": [
