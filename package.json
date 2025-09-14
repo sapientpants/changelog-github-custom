@@ -19,8 +19,8 @@
   "main": "./dist/src/changelog-custom.js",
   "exports": {
     ".": {
-      "import": "./dist/src/changelog-custom.js",
       "types": "./dist/src/changelog-custom.d.ts",
+      "import": "./dist/src/changelog-custom.js",
       "default": "./dist/src/changelog-custom.js"
     }
   },
