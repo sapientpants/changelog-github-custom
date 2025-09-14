@@ -20,8 +20,7 @@
   "exports": {
     ".": {
       "types": "./dist/src/changelog-custom.d.ts",
-      "import": "./dist/src/changelog-custom.js",
-      "default": "./dist/src/changelog-custom.js"
+      "import": "./dist/src/changelog-custom.js"
     }
   },
   "files": [
