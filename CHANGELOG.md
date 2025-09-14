@@ -1,5 +1,16 @@
 # changelog-github-custom
 
+## 1.2.0
+
+### Minor Changes
+
+- [#5](https://github.com/sapientpants/changelog-github-custom/pull/5) [`1f8ff08`](https://github.com/sapientpants/changelog-github-custom/commit/1f8ff08404100a6dd2d180d3239cdb42382dbe66) - feat: prepare package for public npm publishing
+  - Added package metadata including description, author, and keywords
+  - Configured package as public with proper npm publish settings
+  - Added repository information
+  - Specified main entry point and exports
+  - Defined files to be included in the published package
+
 ## 1.1.0
 
 ### Minor Changes
