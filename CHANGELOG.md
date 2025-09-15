@@ -1,5 +1,14 @@
 # changelog-github-custom
 
+## 1.2.1
+
+### Patch Changes
+
+- [#6](https://github.com/sapientpants/changelog-github-custom/pull/6) [`89ff475`](https://github.com/sapientpants/changelog-github-custom/commit/89ff47573ef7fc2ac912fcbef19228e69ffb1c49) - Fix package.json exports configuration to resolve ERR_PACKAGE_PATH_NOT_EXPORTED error
+  - Corrected main and exports fields to point to the actual built file location (dist/src/changelog-custom.js)
+  - Removed incorrect CommonJS exports since this is an ESM-only package (type: module)
+  - Added types export for better TypeScript support
+
 ## 1.2.0
 
 ### Minor Changes
