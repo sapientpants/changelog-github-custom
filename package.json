@@ -1,6 +1,6 @@
 {
   "name": "changelog-github-custom",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Custom GitHub changelog generator for Changesets",
   "keywords": [
     "changelog",

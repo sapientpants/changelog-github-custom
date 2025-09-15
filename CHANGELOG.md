@@ -1,5 +1,16 @@
 # changelog-github-custom
 
+## 1.2.3
+
+### Patch Changes
+
+- [#9](https://github.com/sapientpants/changelog-github-custom/pull/9) [`a857c56`](https://github.com/sapientpants/changelog-github-custom/commit/a857c56fea377c3916da13ac117384c72d9d1771) - Add dual module support (ESM + CommonJS) for compatibility with changesets
+  - Configure separate TypeScript builds for ESM and CommonJS outputs
+  - Update package.json exports to support both require() and import
+  - Add dedicated build configs for each module format
+  - Update build:watch script to support the new build structure
+  - Fixes compatibility issue where changesets couldn't load the formatter using require()
+
 ## 1.2.2
 
 ### Patch Changes
