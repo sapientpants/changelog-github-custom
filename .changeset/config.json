@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
   "changelog": [
-    "../dist/cjs/changelog-custom.js",
+    "../dist/esm/changelog-custom.js",
     {
       "repo": "sapientpants/changelog-github-custom"
     }
