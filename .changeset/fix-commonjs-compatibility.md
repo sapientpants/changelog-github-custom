@@ -1,5 +1,5 @@
 ---
-"changelog-github-custom": patch
+'changelog-github-custom': patch
 ---
 
 Fix CommonJS module compatibility by removing type:module from package.json
