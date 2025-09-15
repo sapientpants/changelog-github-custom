@@ -1,5 +1,12 @@
 # changelog-github-custom
 
+## 1.2.2
+
+### Patch Changes
+
+- [#8](https://github.com/sapientpants/changelog-github-custom/pull/8) [`95fb130`](https://github.com/sapientpants/changelog-github-custom/commit/95fb1309a1fb36afa72c4086430d65a9f72c36f6) - Update dev dependencies
+  - Updated @types/node from 24.3.3 to 24.4.0
+
 ## 1.2.1
 
 ### Patch Changes
