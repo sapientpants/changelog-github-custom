@@ -1,5 +1,13 @@
 # changelog-github-custom
 
+## 1.2.4
+
+### Patch Changes
+
+- [#10](https://github.com/sapientpants/changelog-github-custom/pull/10) [`01b8cf1`](https://github.com/sapientpants/changelog-github-custom/commit/01b8cf1da34e9543ade6ed9545168a4e96f920dc) - Fix CommonJS module compatibility by removing type:module from package.json
+
+  Resolved an issue where the package would fail when loaded by changesets with the error "exports is not defined in ES module scope". The package.json had "type": "module" which caused Node.js to treat CommonJS files as ESM modules. Following the same approach as @changesets/changelog-github, removed the type field to allow proper dual module support.
+
 ## 1.2.3
 
 ### Patch Changes
