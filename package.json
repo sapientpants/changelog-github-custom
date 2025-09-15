@@ -16,11 +16,15 @@
   },
   "private": false,
   "type": "module",
-  "main": "./dist/src/changelog-custom.js",
+  "main": "./dist/cjs/changelog-custom.js",
+  "module": "./dist/esm/changelog-custom.js",
+  "types": "./dist/types/changelog-custom.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/src/changelog-custom.d.ts",
-      "import": "./dist/src/changelog-custom.js"
+      "types": "./dist/types/changelog-custom.d.ts",
+      "import": "./dist/esm/changelog-custom.js",
+      "require": "./dist/cjs/changelog-custom.js",
+      "default": "./dist/esm/changelog-custom.js"
     }
   },
   "files": [
@@ -38,8 +42,12 @@
   "scripts": {
     "dev": "tsc --watch --preserveWatchOutput",
     "start": "node dist/index.js",
-    "build": "tsc -p tsconfig.build.json",
-    "build:watch": "tsc -p tsconfig.build.json --watch",
+    "build": "pnpm build:clean && pnpm build:esm && pnpm build:cjs",
+    "build:clean": "rimraf dist",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:watch": "tsc -p tsconfig.esm.json --watch",
+    "build:watch:cjs": "tsc -p tsconfig.cjs.json --watch",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "typecheck:watch": "tsc -p tsconfig.json --noEmit --watch",
     "lint": "eslint .",
