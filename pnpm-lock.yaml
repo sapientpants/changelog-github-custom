@@ -7,6 +7,9 @@ settings:
 importers:
   .:
     dependencies:
+      '@changesets/get-github-info':
+        specifier: ^0.6.0
+        version: 0.6.0(encoding@0.1.13)
       '@changesets/types':
         specifier: ^6.1.0
         version: 6.1.0
@@ -14,9 +17,6 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.7
         version: 2.29.7(@types/node@24.4.0)
-      '@changesets/get-github-info':
-        specifier: 0.6.0
-        version: 0.6.0(encoding@0.1.13)
       '@commitlint/cli':
         specifier: 19.8.1
         version: 19.8.1(@types/node@24.4.0)(typescript@5.9.2)
