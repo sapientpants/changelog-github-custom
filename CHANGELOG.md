@@ -1,5 +1,11 @@
 # changelog-github-custom
 
+## 1.2.5
+
+### Patch Changes
+
+- [#11](https://github.com/sapientpants/changelog-github-custom/pull/11) [`e9def97`](https://github.com/sapientpants/changelog-github-custom/commit/e9def97e8578206c2ebc8c55e2b0b832082b9f12) - Add @changesets/get-github-info as dependency for enhanced GitHub integration capabilities
+
 ## 1.2.4
 
 ### Patch Changes
