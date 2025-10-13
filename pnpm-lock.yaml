@@ -24,8 +24,8 @@ importers:
         specifier: 19.8.1
         version: 19.8.1
       '@cyclonedx/cdxgen':
-        specifier: 11.7.0
-        version: 11.7.0
+        specifier: 11.9.0
+        version: 11.9.0
       '@types/node':
         specifier: ^24.4.0
         version: 24.4.0
@@ -101,24 +101,24 @@ packages:
       }
     engines: { node: '>=6.0.0' }
 
-  '@appthreat/atom-common@1.0.8':
+  '@appthreat/atom-common@1.0.11':
     resolution:
       {
-        integrity: sha512-JSfUNFdEFRyK678WnBlMPWk+tFZwrebUoWF9Jj0AoYVQi6NCqvzPCzsmyOI/jRYvecnN8FgdEozZsujo/nPqNQ==,
+        integrity: sha512-WQShpvjqdKCLuW/TeNxE9FH/SPR6Nxok+t1qcWzd3+m7X/Za57HNE0KEm0YNJ9IvBvj7mE9nMEF5r9XFDRg+xg==,
       }
 
-  '@appthreat/atom-parsetools@1.0.8':
+  '@appthreat/atom-parsetools@1.0.11':
     resolution:
       {
-        integrity: sha512-W/OyTotfDFbgFpMmN1WT5QT6irVpU3EBcl/MH8vZT3OLJwYBFrV/PGkZ1o3WukJrPbivMKlsHcV0e/mr2zYawQ==,
+        integrity: sha512-5sqkFrckEmyFmnNQ6pCP4OxcS287KVqEdPUBBRyKfnHntYzKMiuFgIriKUPd2fTLfSTmNQ67Z3ouPS41AcOEdw==,
       }
     engines: { node: '>=16.0.0' }
     hasBin: true
 
-  '@appthreat/atom@2.3.0':
+  '@appthreat/atom@2.4.2':
     resolution:
       {
-        integrity: sha512-7oXgrKASyRnPc/ILrCxpfkBxeBRYE7Okw5DvUzXrIQP1DiJ7oJ1AI9MXgfhU1Sjv1ikb0hMi5F/QoutrBfq2aw==,
+        integrity: sha512-z9PkDrSydnuP+VoBeHcF4evVE98S1+ZASWfMR0ryBFUEDsZCWw3/bs8bpZNqwBYSo5/58ilEJRUcHQs7HwtbTA==,
       }
     engines: { node: '>=16.0.0' }
     hasBin: true
@@ -219,6 +219,12 @@ packages:
     resolution:
       {
         integrity: sha512-w/gJKME9mYN7ZoUAmSMAWXk4hkVpxRKvEJCb3dV5g9wwWdxTJJ0ayOJAVcNxtdqaxDyFuC0uz4RSGVacJ030PQ==,
+      }
+
+  '@bufbuild/protobuf@2.9.0':
+    resolution:
+      {
+        integrity: sha512-rnJenoStJ8nvmt9Gzye8nkYd6V22xUAnu4086ER7h1zJ508vStko4pMvDeQ446ilDTFpV5wnoc5YS7XvMwwMqA==,
       }
 
   '@changesets/apply-release-plan@7.0.13':
@@ -456,99 +462,99 @@ packages:
       }
     engines: { node: '>=v18' }
 
-  '@cyclonedx/cdxgen-plugins-bin-darwin-amd64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-darwin-amd64@1.7.0':
     resolution:
       {
-        integrity: sha512-8iVxUFj3DlCcHmA9+n3sRHcf3gq+ohbhNe9uq+ppsMJ5So48DWdVjHveZN7MWpxTnZqk8KJTAYNPFvaLKAFYBQ==,
+        integrity: sha512-evJAEetfhKU7N9tCaOl/CZcs4upoEIKvLdhV9ogzk9QIur+HtZX5F9LddGNoQuzhB1Umy2tAyFAKhl+EX63BFQ==,
       }
     cpu: [x64]
     os: [darwin]
 
-  '@cyclonedx/cdxgen-plugins-bin-darwin-arm64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-darwin-arm64@1.7.0':
     resolution:
       {
-        integrity: sha512-m9uObp61BQb+34YDFoITmB8xQiX7mRx8a2EoEEsgcL26I9h2454cXri4ZqfzMej3loCUlJHxspptzXmYrS8cug==,
+        integrity: sha512-gnQqfDNd8RXKH3n/BUtSi1aJghPLSVpAScaM0iiuGvdfOVuwqBEMAKx/SC0v5yXdCtThC45W5/Zz8Lc9eNoNAw==,
       }
     cpu: [arm64]
     os: [darwin]
 
-  '@cyclonedx/cdxgen-plugins-bin-linux-amd64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-linux-amd64@1.7.0':
     resolution:
       {
-        integrity: sha512-D/vdxpvrtkfYITHpiQjlvhZBNkm2GLmm/lZHbSs5R+nghbulTgXR9I8pTALFTBhjHZQu55DTiACmn/irhhotkA==,
+        integrity: sha512-Nitd3y1yb8Xv2e7ODqki3M8DO6SzWe/gGsioRiA6iNXcQ/JYzg03CyHEaTjCAhJXFO4qraCn4N6OPN2H7c8bew==,
       }
     cpu: [x64]
     os: [linux]
 
-  '@cyclonedx/cdxgen-plugins-bin-linux-arm64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-linux-arm64@1.7.0':
     resolution:
       {
-        integrity: sha512-xd9A25e+4SwHwm9FRglMdsfRsTAROTj3C5eiQ501FI+FOxEbnCODNkDFkplqKqDjDDSIPOgc4llmk9Wk+91c/Q==,
+        integrity: sha512-/96YdFdwASQVr+MDO1IbUMYbLoHawTDIsGlhyMV4AI47qKZ59Ein5dvdibqqmnxgmWvG4Vqp941gRaCBlCLWag==,
       }
     cpu: [arm64]
     os: [linux]
 
-  '@cyclonedx/cdxgen-plugins-bin-linux-arm@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-linux-arm@1.7.0':
     resolution:
       {
-        integrity: sha512-6c7IGJcbZemZ2RCj3r1BbxPfQZPxzQNvuk4er0xLdcompQITvjmWT/aaYFtPLT5ymDjIfDyVbgDin8PXQwWWIA==,
+        integrity: sha512-eNnS9Kd+j4YDiIotCA3EQWyiHKjx7iZqh5+gyF38zmSJQRssEWvCdv+IPvXPyZw8hh5g9/8IQWPYMFpB3fpopg==,
       }
     cpu: [arm]
     os: [linux]
 
-  '@cyclonedx/cdxgen-plugins-bin-linux-ppc64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-linux-ppc64@1.7.0':
     resolution:
       {
-        integrity: sha512-JaRY6F+3VBHZMZ51DhC8NhHJkwtLOM1Lnh//iAPw5pAxpQdron+YwfcVIKWhBlFx5zxbz2NI5L7QtiEV/iO4PA==,
+        integrity: sha512-AWLQ33x/mUtYLfIfCq8tZ8TykXUzzNo6ZLvf1eOmEeEyYw/9Yx6E7KzzaAakGl886lJW/1gzmhvFPXD+ZKEIpA==,
       }
     cpu: [ppc64]
     os: [linux]
 
-  '@cyclonedx/cdxgen-plugins-bin-linuxmusl-amd64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-linuxmusl-amd64@1.7.0':
     resolution:
       {
-        integrity: sha512-X4eHr0WUtBOiX1Yy8hr35JhpUBJYYbZ31v8KCHtuSK8/h5/0gJidg1OvTGxFWoOLKtPCcb3FvqCY+PSrUcxN0A==,
+        integrity: sha512-miYABkiNS+0m0z9L5lfIyiAQezuYthkzzPqX6DgPeMgFT8SfoUng2dtRzkCPLtCUBj8lMyBntXTjZrmH7QOMoA==,
       }
     cpu: [x64]
     os: [linux]
 
-  '@cyclonedx/cdxgen-plugins-bin-linuxmusl-arm64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-linuxmusl-arm64@1.7.0':
     resolution:
       {
-        integrity: sha512-smaxqZ2ZmVm04elK9Dydk1IjEcyRuRt9pSBZxK/RhgJojsJGQaeY/boKR0P/46avoNNiZbVkIDAIbBjfJ5Z7RA==,
+        integrity: sha512-Rh8ChTldyY/01EWrciyhnUltC2YNLmdkwaPDZsJT/as1Bu0Q4iOnepMw2WpqwzkaGbZG5PgFtzeuV1kBKjo07Q==,
       }
     cpu: [arm64]
     os: [linux]
 
-  '@cyclonedx/cdxgen-plugins-bin-windows-amd64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-windows-amd64@1.7.0':
     resolution:
       {
-        integrity: sha512-6reJ+EFAR8YIwSRYMZ/dfF5e+o/JGaAa7h8ByHUcDXdVb9AZDyFKEXu0WeH732FJ1rk06GuNBU2ZFonFvt5lqQ==,
+        integrity: sha512-sCeTnlDq3Wojit2+MqErsYhD/Mv7VickLU2PazmamQc4LVZHakZPGxoG4CFUt4oFVux9CoY1+RxkE+Ia+E+fsA==,
       }
     cpu: [x64]
     os: [win32]
 
-  '@cyclonedx/cdxgen-plugins-bin-windows-arm64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-windows-arm64@1.7.0':
     resolution:
       {
-        integrity: sha512-MnYmZXiIZNCPZl3F9KGtKdCjOBfBBI866hdKMojdbgL9u5VMfQBrGA8xTAnAoXPK4MAVRelz42NswieW4OCN+Q==,
+        integrity: sha512-AzQrY0H1A7JduJTBr/Ub7ppt9RKXjc2+AXV38dvekXYvKSnwnR4715gEZ0mwRnn/BZ4az0uQwMlJCpY8qttJIg==,
       }
     cpu: [arm64]
     os: [win32]
 
-  '@cyclonedx/cdxgen-plugins-bin@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin@1.7.0':
     resolution:
       {
-        integrity: sha512-bw+sdaGO54LE5CX+keXXZRNqt6tkwzNctLUmUrNagSP5AWD3U1q3CgWUD55QKOMZcIIrusaFO2vhQZMsTdp0jQ==,
+        integrity: sha512-pgPMY2vHKMTcW24qtcql0uIck3t66U+QmUrO7C6E8kg06tJqBgo8PtT58FhI4B41lPrpq8rAQzo2jLCLu1JnCw==,
       }
     cpu: [x64]
 
-  '@cyclonedx/cdxgen@11.7.0':
+  '@cyclonedx/cdxgen@11.9.0':
     resolution:
       {
-        integrity: sha512-k4kthndGHjFCGX2N1HP+o/5qnd5a+3kHPSrNIcflgAow90xQ7X68yFUsPxKU4KTdTHvvDlpo3ovVl19d1OgG7A==,
+        integrity: sha512-G/8kYvtwTjEQMaqeWfT9mgZUgxEwJ7wlphkKe1rVGcVcY8/jwj6rCD078DNvruqBRcZwLshpKtbJlyS/IYDjqw==,
       }
-    engines: { node: '>=20' }
+    engines: { node: '>=20', pnpm: '>=10' }
     hasBin: true
 
   '@esbuild/aix-ppc64@0.25.9':
@@ -1002,14 +1008,6 @@ packages:
       }
     engines: { node: ^18.17.0 || >=20.5.0 }
 
-  '@npmcli/arborist@9.1.4':
-    resolution:
-      {
-        integrity: sha512-2Co31oEFlzT9hYjGahGL4PqDXXpA18tX9yu55j5on+m2uDiyBoljQjHNnnNVCji4pFUjawlHi23tQ4j2A5gHow==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
-    hasBin: true
-
   '@npmcli/fs@4.0.0':
     resolution:
       {
@@ -1017,12 +1015,12 @@ packages:
       }
     engines: { node: ^18.17.0 || >=20.5.0 }
 
-  '@npmcli/git@6.0.3':
+  '@npmcli/git@7.0.0':
     resolution:
       {
-        integrity: sha512-GUYESQlxZRAdhs3UhbB6pVRNUELQOHXwK9ruDkwmCv2aZ5y0SApQzUJCg02p3A7Ue2J5hxvlk1YI53c00NmRyQ==,
+        integrity: sha512-vnz7BVGtOctJAIHouCJdvWBhsTVSICMeUgZo2c7XAi5d5Rrl80S1H7oPym7K03cRuinK5Q6s2dw36+PgXQTcMA==,
       }
-    engines: { node: ^18.17.0 || >=20.5.0 }
+    engines: { node: ^20.17.0 || >=22.9.0 }
 
   '@npmcli/installed-package-contents@3.0.0':
     resolution:
@@ -1032,17 +1030,10 @@ packages:
     engines: { node: ^18.17.0 || >=20.5.0 }
     hasBin: true
 
-  '@npmcli/map-workspaces@4.0.2':
+  '@npmcli/map-workspaces@5.0.0':
     resolution:
       {
-        integrity: sha512-mnuMuibEbkaBTYj9HQ3dMe6L0ylYW+s/gfz7tBDMFY/la0w9Kf44P9aLn4/+/t3aTR3YUHKoT6XQL9rlicIe3Q==,
-      }
-    engines: { node: ^18.17.0 || >=20.5.0 }
-
-  '@npmcli/metavuln-calculator@9.0.1':
-    resolution:
-      {
-        integrity: sha512-B7ziEnkSmnauecEvFbg9h0d2CVa3uJudd9bTDc9vScfYdRETkQkCriFiYCV3PXE++igd5JRw35WJz902HnGrCg==,
+        integrity: sha512-+YJN6+BIQEC5QL4EqffJ2I1S9ySspwn7GP7uQINtZhf3uy7P0KnnIg+Ab5WeSUTZYpg+jn3GSfMme2FutB7qEQ==,
       }
     engines: { node: ^20.17.0 || >=22.9.0 }
 
@@ -1053,24 +1044,10 @@ packages:
       }
     engines: { node: ^18.17.0 || >=20.5.0 }
 
-  '@npmcli/node-gyp@4.0.0':
+  '@npmcli/package-json@7.0.1':
     resolution:
       {
-        integrity: sha512-+t5DZ6mO/QFh78PByMq1fGSAub/agLJZDRfJRMeOSNCt8s9YVlTjmGpIPwPhvXTGUIJk+WszlT0rQa1W33yzNA==,
-      }
-    engines: { node: ^18.17.0 || >=20.5.0 }
-
-  '@npmcli/package-json@6.2.0':
-    resolution:
-      {
-        integrity: sha512-rCNLSB/JzNvot0SEyXqWZ7tX2B5dD2a1br2Dp0vSYVo5jh8Z0EZ7lS9TsZ1UtziddB1UfNUaMCc538/HztnJGA==,
-      }
-    engines: { node: ^18.17.0 || >=20.5.0 }
-
-  '@npmcli/package-json@7.0.0':
-    resolution:
-      {
-        integrity: sha512-wy5os0g17akBCVScLyDsDFFf4qC/MmUgIGAFw2pmBGJ/yAQfFbTR9gEaofy4HGm9Jf2MQBnKZICfNds2h3WpEg==,
+        integrity: sha512-956YUeI0YITbk2+KnirCkD19HLzES0habV+Els+dyZaVsaM6VGSiNwnRu6t3CZaqDLz4KXy2zx+0N/Zy6YjlAA==,
       }
     engines: { node: ^20.17.0 || >=22.9.0 }
 
@@ -1092,20 +1069,6 @@ packages:
     resolution:
       {
         integrity: sha512-7VmYAmk4csGv08QzrDKScdzn11jHPFGyqJW39FyPgPuAp3zIaUmuCo1yxw9aGs+NEJuTGQ9Gwqpt93vtJubucg==,
-      }
-    engines: { node: ^18.17.0 || >=20.5.0 }
-
-  '@npmcli/run-script@10.0.0':
-    resolution:
-      {
-        integrity: sha512-vaQj4nccJbAslopIvd49pQH2NhUp7G9pY4byUtmwhe37ZZuubGrx0eB9hW2F37uVNRuDDK6byFGXF+7JCuMSZg==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
-
-  '@npmcli/run-script@9.1.0':
-    resolution:
-      {
-        integrity: sha512-aoNSbxtkePXUlbZB+anS1LqsJdctG5n3UVhfU47+CDdwMi6uNTBMF9gPcQRnqghQd2FGzcwwIFBruFMxjhBewg==,
       }
     engines: { node: ^18.17.0 || >=20.5.0 }
 
@@ -1297,52 +1260,10 @@ packages:
         integrity: sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg==,
       }
 
-  '@sigstore/bundle@4.0.0':
+  '@sindresorhus/is@7.1.0':
     resolution:
       {
-        integrity: sha512-NwCl5Y0V6Di0NexvkTqdoVfmjTaQwoLM236r89KEojGmq/jMls8S+zb7yOwAPdXvbwfKDlP+lmXgAL4vKSQT+A==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
-
-  '@sigstore/core@3.0.0':
-    resolution:
-      {
-        integrity: sha512-NgbJ+aW9gQl/25+GIEGYcCyi8M+ng2/5X04BMuIgoDfgvp18vDcoNHOQjQsG9418HGNYRxG3vfEXaR1ayD37gg==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
-
-  '@sigstore/protobuf-specs@0.5.0':
-    resolution:
-      {
-        integrity: sha512-MM8XIwUjN2bwvCg1QvrMtbBmpcSHrkhFSCu1D11NyPvDQ25HEc4oG5/OcQfd/Tlf/OxmKWERDj0zGE23jQaMwA==,
-      }
-    engines: { node: ^18.17.0 || >=20.5.0 }
-
-  '@sigstore/sign@4.0.0':
-    resolution:
-      {
-        integrity: sha512-5+IadiqPzRRMfvftHONzpeH2EzlDNuBiTMC3Lx7+9tLqn/4xbWVfSZA+YaOzKCn86k5BWfJ+aGO9v+pQmIyxqQ==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
-
-  '@sigstore/tuf@4.0.0':
-    resolution:
-      {
-        integrity: sha512-0QFuWDHOQmz7t66gfpfNO6aEjoFrdhkJaej/AOqb4kqWZVbPWFZifXZzkxyQBB1OwTbkhdT3LNpMFxwkTvf+2w==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
-
-  '@sigstore/verify@3.0.0':
-    resolution:
-      {
-        integrity: sha512-moXtHH33AobOhTZF8xcX1MpOFqdvfCk7v6+teJL8zymBiDXwEsQH6XG9HGx2VIxnJZNm4cNSzflTLDnQLmIdmw==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
-
-  '@sindresorhus/is@7.0.2':
-    resolution:
-      {
-        integrity: sha512-d9xRovfKNz1SKieM0qJdO+PQonjnnIfSNWfHYnBSJ9hkjm0ZPw6HlxscDXYstp3z+7V2GOFHc+J0CYrYTjqCJw==,
+        integrity: sha512-7F/yz2IphV39hiS2zB4QYVkivrptHHh0K8qJJd9HhuWSdvf8AN7NpebW3CcDZDBQsUPMoDKWsY2WWgW7bqOcfA==,
       }
     engines: { node: '>=18' }
 
@@ -1359,20 +1280,6 @@ packages:
         integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==,
       }
     engines: { node: '>=14.16' }
-
-  '@tufjs/canonical-json@2.0.0':
-    resolution:
-      {
-        integrity: sha512-yVtV8zsdo8qFHe+/3kw81dSLyF7D576A5cCFCi4X7B39tWT7SekaEFUnvnWJHz+9qO7qJTah1JbrDjWKqFtdWA==,
-      }
-    engines: { node: ^16.14.0 || >=18.0.0 }
-
-  '@tufjs/models@4.0.0':
-    resolution:
-      {
-        integrity: sha512-h5x5ga/hh82COe+GoD4+gKUeV4T3iaYOxqLt41GRKApinPI7DMidhCmNVTjKfhCWFJIGXaFJee07XczdT4jdZQ==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
 
   '@types/chai@5.2.2':
     resolution:
@@ -1944,13 +1851,6 @@ packages:
       }
     engines: { node: ^18.17.0 || >=20.5.0 }
 
-  cacache@20.0.1:
-    resolution:
-      {
-        integrity: sha512-+7LYcYGBYoNqTp1Rv7Ny1YjUo5E0/ftkQtraH3vkfAGgVHc+ouWdC8okAwQgQR7EVIdW6JTzTmhKFwzb+4okAQ==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
-
   cacheable-lookup@7.0.0:
     resolution:
       {
@@ -2351,6 +2251,18 @@ packages:
       supports-color:
         optional: true
 
+  debug@4.4.3:
+    resolution:
+      {
+        integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==,
+      }
+    engines: { node: '>=6.0' }
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
+
   decode-named-character-reference@1.2.0:
     resolution:
       {
@@ -2447,10 +2359,10 @@ packages:
       }
     engines: { node: '>=8' }
 
-  detect-libc@2.1.0:
+  detect-libc@2.1.2:
     resolution:
       {
-        integrity: sha512-vEtk+OcP7VBRtQZ1EJ3bdgzSfBjgnEalLTp5zjJrS+2Z1w2KZly4SBdac/WDU3hhsNAZ9E8SC96ME4Ey8MZ7cg==,
+        integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==,
       }
     engines: { node: '>=8' }
 
@@ -2904,10 +2816,10 @@ packages:
       }
     engines: { node: '>=12.0.0' }
 
-  exponential-backoff@3.1.2:
+  exponential-backoff@3.1.3:
     resolution:
       {
-        integrity: sha512-8QxYTVXUkuy7fIIoitQkPwGonB8F3Zj8eEO8Sqg9Zv/bkI7RJAzowee4gr81Hak/dUTpA2Z7VfQgoijjPNlUZA==,
+        integrity: sha512-ZgEeZXj30q+I0EN+CbSSpIyPaJ5HVQD18Z1m+u1FXbAeT94mr1zw50q4q6jiiC447Nl/YTcIYSAftiGqetwXCA==,
       }
 
   extendable-error@0.1.7:
@@ -3249,10 +3161,10 @@ packages:
       }
     engines: { node: '>= 0.4' }
 
-  got@14.4.8:
+  got@14.4.9:
     resolution:
       {
-        integrity: sha512-vxwU4HuR0BIl+zcT1LYrgBjM+IJjNElOjCzs0aPgHorQyr/V6H6Y73Sn3r3FOlUffvWD+Q5jtRuGWaXkU8Jbhg==,
+        integrity: sha512-Dbu075Jwm3QwNCIoCenqkqY8l2gd7e/TanuhMbzZIEsb1mpAneImSusKhZ+XdqqC3S91SDV/1SdWpGXKAlm8tA==,
       }
     engines: { node: '>=20' }
 
@@ -3301,13 +3213,6 @@ packages:
         integrity: sha512-eSmmWE5bZTK2Nou4g0AI3zZ9rswp7GRKoKXS1BLUkvPviOqs4YTN1djQIqrXy9k5gEtdLPy86JjRwsNM9tnDcA==,
       }
     engines: { node: '>=0.10.0' }
-
-  hosted-git-info@8.1.0:
-    resolution:
-      {
-        integrity: sha512-Rw/B2DNQaPBICNXEm8balFz9a6WpZrkCGpcWFpy7nCj+NyhSdqXipmfvtmWt9xGfp0wZnBxB+iVpLmQMYt47Tw==,
-      }
-    engines: { node: ^18.17.0 || >=20.5.0 }
 
   hosted-git-info@9.0.0:
     resolution:
@@ -3396,13 +3301,6 @@ packages:
       {
         integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==,
       }
-
-  ignore-walk@8.0.0:
-    resolution:
-      {
-        integrity: sha512-FCeMZT4NiRQGh+YkeKMtWrOmBgWjHjMJ26WQWrRQyoyzqevdaGSakUaJW5xQYmjLlUVk2qUnCjYVBax9EKKg8A==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
 
   ignore@5.3.2:
     resolution:
@@ -4004,6 +3902,13 @@ packages:
       }
     engines: { node: 20 || >=22 }
 
+  lru-cache@11.2.2:
+    resolution:
+      {
+        integrity: sha512-F9ODfyqML2coTIsQpSkRHnLSZMtkU8Q+mSfcaIyKwy58u+8k5nvAYeiNhsyMARvzNcXJ9QfWVrcPsC9e9rAxtg==,
+      }
+    engines: { node: 20 || >=22 }
+
   magic-string@0.30.19:
     resolution:
       {
@@ -4029,13 +3934,6 @@ packages:
         integrity: sha512-QMjGbFTP0blj97EeidG5hk/QhKQ3T4ICckQGLgz38QF7Vgbk6e6FTARN8KhKxyBbWn8R0HU+bnw8aSoFPD4qtQ==,
       }
     engines: { node: ^18.17.0 || >=20.5.0 }
-
-  make-fetch-happen@15.0.1:
-    resolution:
-      {
-        integrity: sha512-9GjpQcaUXO2xmre8JfALl8Oji8Jpo+SyY2HpqFFPHVczOld/I+JFRx9FkP/uedZzkJlI9uM5t/j6dGJv4BScQw==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
 
   markdown-it@14.1.0:
     resolution:
@@ -4382,10 +4280,10 @@ packages:
       }
     engines: { node: '>=16 || 14 >=14.17' }
 
-  minizlib@3.0.2:
+  minizlib@3.1.0:
     resolution:
       {
-        integrity: sha512-oG62iEk+CYt5Xj2YqI5Xi9xWUeZhDI8jjQmC5oThVH5JGCTgIjr7ciJDzC7MBzYd//WvR1OTmP5Q38Q8ShQtVA==,
+        integrity: sha512-KZxYo1BUkWD2TVFLr0MQoM8vUUigWD3LlD83a/75BqC+4qE0Hb1Vo5v1FgcfaNXvfXzr+5EhQ6ing/CaBijTlw==,
       }
     engines: { node: '>= 18' }
 
@@ -4399,14 +4297,6 @@ packages:
     resolution:
       {
         integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==,
-      }
-    engines: { node: '>=10' }
-    hasBin: true
-
-  mkdirp@3.0.1:
-    resolution:
-      {
-        integrity: sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==,
       }
     engines: { node: '>=10' }
     hasBin: true
@@ -4497,10 +4387,10 @@ packages:
       }
     engines: { node: '>= 0.6' }
 
-  node-abi@3.77.0:
+  node-abi@3.78.0:
     resolution:
       {
-        integrity: sha512-DSmt0OEcLoK4i3NuscSbGjOf3bqiDEutejqENSplMSFA/gmB8mkED9G4pKWnPl7MDU4rSHebKPHeitpDfyH0cQ==,
+        integrity: sha512-E2wEyrgX/CqvicaQYU3Ze1PFGjc4QYPGsjUrlYkqAE0WjHEZwgOsGMPMzkMse4LjJbDmaEuDX3CM036j5K2DSQ==,
       }
     engines: { node: '>=10' }
 
@@ -4580,13 +4470,6 @@ packages:
       }
     engines: { node: ^18.17.0 || >=20.5.0 }
 
-  npm-package-arg@12.0.2:
-    resolution:
-      {
-        integrity: sha512-f1NpFjNI9O4VbKMOlA5QoBq/vSQPORHcTZ2feJpFkTHJ9eQkdlmZEKSjcAhxTGInC7RlEyScT9ui67NaOsjFWA==,
-      }
-    engines: { node: ^18.17.0 || >=20.5.0 }
-
   npm-package-arg@13.0.0:
     resolution:
       {
@@ -4594,31 +4477,10 @@ packages:
       }
     engines: { node: ^20.17.0 || >=22.9.0 }
 
-  npm-packlist@10.0.1:
+  npm-pick-manifest@11.0.1:
     resolution:
       {
-        integrity: sha512-vaC03b2PqJA6QqmwHi1jNU8fAPXEnnyv4j/W4PVfgm24C4/zZGSVut3z0YUeN0WIFCo1oGOL02+6LbvFK7JL4Q==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
-
-  npm-pick-manifest@10.0.0:
-    resolution:
-      {
-        integrity: sha512-r4fFa4FqYY8xaM7fHecQ9Z2nE9hgNfJR+EmoKv0+chvzWkBcORX3r0FpTByP+CbOVJDladMXnPQGVN8PBLGuTQ==,
-      }
-    engines: { node: ^18.17.0 || >=20.5.0 }
-
-  npm-registry-fetch@18.0.2:
-    resolution:
-      {
-        integrity: sha512-LeVMZBBVy+oQb5R6FDV9OlJCcWDU+al10oKpe+nsvcHnG24Z3uM3SvJYKfGJlfGjVU8v9liejCrUR/M5HO5NEQ==,
-      }
-    engines: { node: ^18.17.0 || >=20.5.0 }
-
-  npm-registry-fetch@19.0.0:
-    resolution:
-      {
-        integrity: sha512-DFxSAemHUwT/POaXAOY4NJmEWBPB0oKbwD6FFDE9hnt1nORkt/FXvgjD4hQjoKoHw9u0Ezws9SPXwV7xE/Gyww==,
+        integrity: sha512-HnU7FYSWbo7dTVHtK0G+BXbZ0aIfxz/aUCVLN0979Ec6rGUX5cJ6RbgVx5fqb5G31ufz+BVFA7y1SkRTPVNoVQ==,
       }
     engines: { node: ^20.17.0 || >=22.9.0 }
 
@@ -4783,14 +4645,6 @@ packages:
       {
         integrity: sha512-fWC4ZPxo80qlh3xN5FxfIoQD3phVY4+EyzTIqyksjhKNDmaicdpxSvkWwIrYTtv9C1/RcUN6pxaTwGmj2NzS6A==,
       }
-
-  pacote@21.0.1:
-    resolution:
-      {
-        integrity: sha512-LHGIUQUrcDIJUej53KJz1BPvUuHrItrR2yrnN0Kl9657cJ0ZT6QJHk9wWPBnQZhYT5KLyZWrk9jaYc2aKDu4yw==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
-    hasBin: true
 
   parent-module@1.0.1:
     resolution:
@@ -5459,13 +5313,6 @@ packages:
       }
     engines: { node: '>=14' }
 
-  sigstore@4.0.0:
-    resolution:
-      {
-        integrity: sha512-Gw/FgHtrLM9WP8P5lLcSGh9OQcrTruWCELAiS48ik1QbL0cH+dfjomiRTUE9zzz+D1N6rOLkwXUvVmXZAsNE0Q==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
-
   simple-concat@1.0.1:
     resolution:
       {
@@ -5733,10 +5580,10 @@ packages:
       }
     engines: { node: '>=10.0.0' }
 
-  tar-fs@2.1.3:
+  tar-fs@2.1.4:
     resolution:
       {
-        integrity: sha512-090nwYJDmlhwFwEW3QQl+vaNnxsO2yVsd45eTKRBzSzu+hlb1w2K9inVq5b0ngXuLVqQ4ApvsUHHnu/zQNkWAg==,
+        integrity: sha512-mDAjwmZdh7LTT6pNleZ05Yt65HC3E+NiQzl672vQG38jIrehtJk/J3mNwIg+vShQPcLF/LV7CMnDW6vjj6sfYQ==,
       }
 
   tar-stream@2.2.0:
@@ -5746,10 +5593,10 @@ packages:
       }
     engines: { node: '>=6' }
 
-  tar@7.4.3:
+  tar@7.5.1:
     resolution:
       {
-        integrity: sha512-5S7Va8hKfV7W5U6g3aYxXmlPoZVAwUMy9AOKyF2fVuZa2UD3qZjg578OrLRt8PcNN1PleVaL/5/yYATNL0ICUw==,
+        integrity: sha512-nlGpxf+hv0v7GkWBK2V9spgactGOp0qvfWRxUMjqHyzrt3SgwE48DIv/FhqPHJYLHpgW1opq3nERbz5Anq7n1g==,
       }
     engines: { node: '>=18' }
 
@@ -5867,13 +5714,6 @@ packages:
     engines: { node: '>=18.12' }
     peerDependencies:
       typescript: '>=4.8.4'
-
-  tuf-js@4.0.0:
-    resolution:
-      {
-        integrity: sha512-Lq7ieeGvXDXwpoSmOSgLWVdsGGV9J4a77oDTAPe/Ltrqnnm/ETaRlBAQTH5JatEh8KXuE6sddf9qAv1Q2282Hg==,
-      }
-    engines: { node: ^20.17.0 || >=22.9.0 }
 
   tunnel-agent@0.6.0:
     resolution:
@@ -6344,21 +6184,21 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
 
-  '@appthreat/atom-common@1.0.8':
+  '@appthreat/atom-common@1.0.11':
     optional: true
 
-  '@appthreat/atom-parsetools@1.0.8':
+  '@appthreat/atom-parsetools@1.0.11':
     dependencies:
-      '@appthreat/atom-common': 1.0.8
+      '@appthreat/atom-common': 1.0.11
       '@babel/parser': 7.28.4
       typescript: 5.9.2
       yargs: 17.7.2
     optional: true
 
-  '@appthreat/atom@2.3.0':
+  '@appthreat/atom@2.4.2':
     dependencies:
-      '@appthreat/atom-common': 1.0.8
-      '@appthreat/atom-parsetools': 1.0.8
+      '@appthreat/atom-common': 1.0.11
+      '@appthreat/atom-parsetools': 1.0.11
     optional: true
 
   '@appthreat/cdx-proto@1.1.4':
@@ -6429,6 +6269,9 @@ snapshots:
   '@bcoe/v8-coverage@1.0.2': {}
 
   '@bufbuild/protobuf@2.6.3':
+    optional: true
+
+  '@bufbuild/protobuf@2.9.0':
     optional: true
 
   '@changesets/apply-release-plan@7.0.13':
@@ -6692,82 +6535,106 @@ snapshots:
       '@types/conventional-commits-parser': 5.0.1
       chalk: 5.6.2
 
-  '@cyclonedx/cdxgen-plugins-bin-darwin-amd64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-darwin-amd64@1.7.0':
     optional: true
 
-  '@cyclonedx/cdxgen-plugins-bin-darwin-arm64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-darwin-arm64@1.7.0':
     optional: true
 
-  '@cyclonedx/cdxgen-plugins-bin-linux-amd64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-linux-amd64@1.7.0':
     optional: true
 
-  '@cyclonedx/cdxgen-plugins-bin-linux-arm64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-linux-arm64@1.7.0':
     optional: true
 
-  '@cyclonedx/cdxgen-plugins-bin-linux-arm@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-linux-arm@1.7.0':
     optional: true
 
-  '@cyclonedx/cdxgen-plugins-bin-linux-ppc64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-linux-ppc64@1.7.0':
     optional: true
 
-  '@cyclonedx/cdxgen-plugins-bin-linuxmusl-amd64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-linuxmusl-amd64@1.7.0':
     optional: true
 
-  '@cyclonedx/cdxgen-plugins-bin-linuxmusl-arm64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-linuxmusl-arm64@1.7.0':
     optional: true
 
-  '@cyclonedx/cdxgen-plugins-bin-windows-amd64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-windows-amd64@1.7.0':
     optional: true
 
-  '@cyclonedx/cdxgen-plugins-bin-windows-arm64@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin-windows-arm64@1.7.0':
     optional: true
 
-  '@cyclonedx/cdxgen-plugins-bin@1.6.12':
+  '@cyclonedx/cdxgen-plugins-bin@1.7.0':
     optional: true
 
-  '@cyclonedx/cdxgen@11.7.0':
+  '@cyclonedx/cdxgen@11.9.0':
     dependencies:
       '@babel/parser': 7.28.4
       '@babel/traverse': 7.28.4
       '@iarna/toml': 2.2.5
-      '@npmcli/arborist': 9.1.4
+      '@isaacs/string-locale-compare': 1.1.0
+      '@npmcli/fs': 4.0.0
+      '@npmcli/installed-package-contents': 3.0.0
+      '@npmcli/map-workspaces': 5.0.0
+      '@npmcli/name-from-folder': 3.0.0
+      '@npmcli/package-json': 7.0.1
+      '@npmcli/query': 4.0.1
+      '@npmcli/redact': 3.2.2
       ajv: 8.17.1
       ajv-formats: 3.0.1(ajv@8.17.1)
+      bin-links: 5.0.0
       cheerio: 1.1.2
+      common-ancestor-path: 1.0.1
       edn-data: 1.1.2
+      encoding: 0.1.13
       glob: 11.0.3
       global-agent: 3.0.0
-      got: 14.4.8
-      iconv-lite: 0.6.3
+      got: 14.4.9
+      hosted-git-info: 9.0.0
+      iconv-lite: 0.7.0
+      json-stringify-nice: 1.1.4
       jws: 4.0.0
+      minimatch: 10.0.3
       node-stream-zip: 1.15.0
+      npm-install-checks: 7.1.2
+      npm-package-arg: 13.0.0
+      npm-pick-manifest: 11.0.1
       packageurl-js: 1.0.2
+      parse-conflict-json: 4.0.0
       prettify-xml: 1.2.0
+      proc-log: 5.0.0
+      proggy: 3.0.0
+      promise-all-reject-late: 1.0.1
+      promise-call-limit: 3.0.2
       properties-reader: 2.3.0
+      read-package-json-fast: 4.0.0
       semver: 7.7.2
       ssri: 12.0.0
       table: 6.9.0
-      tar: 7.4.3
+      tar: 7.5.1
+      treeverse: 3.0.0
       uuid: 11.1.0
+      walk-up-path: 4.0.0
       xml-js: 1.6.11
       yaml: 2.8.1
       yargs: 17.7.2
       yoctocolors: 2.1.2
     optionalDependencies:
-      '@appthreat/atom': 2.3.0
+      '@appthreat/atom': 2.4.2
       '@appthreat/cdx-proto': 1.1.4
-      '@bufbuild/protobuf': 2.6.3
-      '@cyclonedx/cdxgen-plugins-bin': 1.6.12
-      '@cyclonedx/cdxgen-plugins-bin-darwin-amd64': 1.6.12
-      '@cyclonedx/cdxgen-plugins-bin-darwin-arm64': 1.6.12
-      '@cyclonedx/cdxgen-plugins-bin-linux-amd64': 1.6.12
-      '@cyclonedx/cdxgen-plugins-bin-linux-arm': 1.6.12
-      '@cyclonedx/cdxgen-plugins-bin-linux-arm64': 1.6.12
-      '@cyclonedx/cdxgen-plugins-bin-linux-ppc64': 1.6.12
-      '@cyclonedx/cdxgen-plugins-bin-linuxmusl-amd64': 1.6.12
-      '@cyclonedx/cdxgen-plugins-bin-linuxmusl-arm64': 1.6.12
-      '@cyclonedx/cdxgen-plugins-bin-windows-amd64': 1.6.12
-      '@cyclonedx/cdxgen-plugins-bin-windows-arm64': 1.6.12
+      '@bufbuild/protobuf': 2.9.0
+      '@cyclonedx/cdxgen-plugins-bin': 1.7.0
+      '@cyclonedx/cdxgen-plugins-bin-darwin-amd64': 1.7.0
+      '@cyclonedx/cdxgen-plugins-bin-darwin-arm64': 1.7.0
+      '@cyclonedx/cdxgen-plugins-bin-linux-amd64': 1.7.0
+      '@cyclonedx/cdxgen-plugins-bin-linux-arm': 1.7.0
+      '@cyclonedx/cdxgen-plugins-bin-linux-arm64': 1.7.0
+      '@cyclonedx/cdxgen-plugins-bin-linux-ppc64': 1.7.0
+      '@cyclonedx/cdxgen-plugins-bin-linuxmusl-amd64': 1.7.0
+      '@cyclonedx/cdxgen-plugins-bin-linuxmusl-arm64': 1.7.0
+      '@cyclonedx/cdxgen-plugins-bin-windows-amd64': 1.7.0
+      '@cyclonedx/cdxgen-plugins-bin-windows-arm64': 1.7.0
       body-parser: 2.2.0
       compression: 1.8.1
       connect: 3.7.0
@@ -7001,56 +6868,18 @@ snapshots:
       socks-proxy-agent: 8.0.5
     transitivePeerDependencies:
       - supports-color
-
-  '@npmcli/arborist@9.1.4':
-    dependencies:
-      '@isaacs/string-locale-compare': 1.1.0
-      '@npmcli/fs': 4.0.0
-      '@npmcli/installed-package-contents': 3.0.0
-      '@npmcli/map-workspaces': 4.0.2
-      '@npmcli/metavuln-calculator': 9.0.1
-      '@npmcli/name-from-folder': 3.0.0
-      '@npmcli/node-gyp': 4.0.0
-      '@npmcli/package-json': 6.2.0
-      '@npmcli/query': 4.0.1
-      '@npmcli/redact': 3.2.2
-      '@npmcli/run-script': 9.1.0
-      bin-links: 5.0.0
-      cacache: 19.0.1
-      common-ancestor-path: 1.0.1
-      hosted-git-info: 8.1.0
-      json-stringify-nice: 1.1.4
-      lru-cache: 10.4.3
-      minimatch: 9.0.5
-      nopt: 8.1.0
-      npm-install-checks: 7.1.2
-      npm-package-arg: 12.0.2
-      npm-pick-manifest: 10.0.0
-      npm-registry-fetch: 18.0.2
-      pacote: 21.0.1
-      parse-conflict-json: 4.0.0
-      proc-log: 5.0.0
-      proggy: 3.0.0
-      promise-all-reject-late: 1.0.1
-      promise-call-limit: 3.0.2
-      read-package-json-fast: 4.0.0
-      semver: 7.7.2
-      ssri: 12.0.0
-      treeverse: 3.0.0
-      walk-up-path: 4.0.0
-    transitivePeerDependencies:
-      - supports-color
+    optional: true
 
   '@npmcli/fs@4.0.0':
     dependencies:
       semver: 7.7.2
 
-  '@npmcli/git@6.0.3':
+  '@npmcli/git@7.0.0':
     dependencies:
       '@npmcli/promise-spawn': 8.0.3
       ini: 5.0.0
-      lru-cache: 10.4.3
-      npm-pick-manifest: 10.0.0
+      lru-cache: 11.2.2
+      npm-pick-manifest: 11.0.1
       proc-log: 5.0.0
       promise-retry: 2.0.1
       semver: 7.7.2
@@ -7061,40 +6890,18 @@ snapshots:
       npm-bundled: 4.0.0
       npm-normalize-package-bin: 4.0.0
 
-  '@npmcli/map-workspaces@4.0.2':
+  '@npmcli/map-workspaces@5.0.0':
     dependencies:
       '@npmcli/name-from-folder': 3.0.0
-      '@npmcli/package-json': 6.2.0
-      glob: 10.4.5
-      minimatch: 9.0.5
-
-  '@npmcli/metavuln-calculator@9.0.1':
-    dependencies:
-      cacache: 19.0.1
-      json-parse-even-better-errors: 4.0.0
-      pacote: 21.0.1
-      proc-log: 5.0.0
-      semver: 7.7.2
-    transitivePeerDependencies:
-      - supports-color
+      '@npmcli/package-json': 7.0.1
+      glob: 11.0.3
+      minimatch: 10.0.3
 
   '@npmcli/name-from-folder@3.0.0': {}
 
-  '@npmcli/node-gyp@4.0.0': {}
-
-  '@npmcli/package-json@6.2.0':
+  '@npmcli/package-json@7.0.1':
     dependencies:
-      '@npmcli/git': 6.0.3
-      glob: 10.4.5
-      hosted-git-info: 8.1.0
-      json-parse-even-better-errors: 4.0.0
-      proc-log: 5.0.0
-      semver: 7.7.2
-      validate-npm-package-license: 3.0.4
-
-  '@npmcli/package-json@7.0.0':
-    dependencies:
-      '@npmcli/git': 6.0.3
+      '@npmcli/git': 7.0.0
       glob: 11.0.3
       hosted-git-info: 9.0.0
       json-parse-even-better-errors: 4.0.0
@@ -7111,28 +6918,6 @@ snapshots:
       postcss-selector-parser: 7.1.0
 
   '@npmcli/redact@3.2.2': {}
-
-  '@npmcli/run-script@10.0.0':
-    dependencies:
-      '@npmcli/node-gyp': 4.0.0
-      '@npmcli/package-json': 7.0.0
-      '@npmcli/promise-spawn': 8.0.3
-      node-gyp: 11.4.2
-      proc-log: 5.0.0
-      which: 5.0.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@npmcli/run-script@9.1.0':
-    dependencies:
-      '@npmcli/node-gyp': 4.0.0
-      '@npmcli/package-json': 6.2.0
-      '@npmcli/promise-spawn': 8.0.3
-      node-gyp: 11.4.2
-      proc-log: 5.0.0
-      which: 5.0.0
-    transitivePeerDependencies:
-      - supports-color
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -7204,52 +6989,13 @@ snapshots:
 
   '@sec-ant/readable-stream@0.4.1': {}
 
-  '@sigstore/bundle@4.0.0':
-    dependencies:
-      '@sigstore/protobuf-specs': 0.5.0
-
-  '@sigstore/core@3.0.0': {}
-
-  '@sigstore/protobuf-specs@0.5.0': {}
-
-  '@sigstore/sign@4.0.0':
-    dependencies:
-      '@sigstore/bundle': 4.0.0
-      '@sigstore/core': 3.0.0
-      '@sigstore/protobuf-specs': 0.5.0
-      make-fetch-happen: 15.0.1
-      proc-log: 5.0.0
-      promise-retry: 2.0.1
-    transitivePeerDependencies:
-      - supports-color
-
-  '@sigstore/tuf@4.0.0':
-    dependencies:
-      '@sigstore/protobuf-specs': 0.5.0
-      tuf-js: 4.0.0
-    transitivePeerDependencies:
-      - supports-color
-
-  '@sigstore/verify@3.0.0':
-    dependencies:
-      '@sigstore/bundle': 4.0.0
-      '@sigstore/core': 3.0.0
-      '@sigstore/protobuf-specs': 0.5.0
-
-  '@sindresorhus/is@7.0.2': {}
+  '@sindresorhus/is@7.1.0': {}
 
   '@sindresorhus/merge-streams@2.3.0': {}
 
   '@szmarczak/http-timer@5.0.1':
     dependencies:
       defer-to-connect: 2.0.1
-
-  '@tufjs/canonical-json@2.0.0': {}
-
-  '@tufjs/models@4.0.0':
-    dependencies:
-      '@tufjs/canonical-json': 2.0.0
-      minimatch: 9.0.5
 
   '@types/chai@5.2.2':
     dependencies:
@@ -7481,7 +7227,8 @@ snapshots:
       jsonparse: 1.3.1
       through: 2.3.8
 
-  abbrev@3.0.1: {}
+  abbrev@3.0.1:
+    optional: true
 
   acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
@@ -7489,7 +7236,8 @@ snapshots:
 
   acorn@8.15.0: {}
 
-  agent-base@7.1.4: {}
+  agent-base@7.1.4:
+    optional: true
 
   ajv-formats@3.0.1(ajv@8.17.1):
     optionalDependencies:
@@ -7586,7 +7334,7 @@ snapshots:
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
-      debug: 4.4.1
+      debug: 4.4.3
       http-errors: 2.0.0
       iconv-lite: 0.6.3
       on-finished: 2.4.1
@@ -7649,22 +7397,9 @@ snapshots:
       minipass-pipeline: 1.2.4
       p-map: 7.0.3
       ssri: 12.0.0
-      tar: 7.4.3
+      tar: 7.5.1
       unique-filename: 4.0.0
-
-  cacache@20.0.1:
-    dependencies:
-      '@npmcli/fs': 4.0.0
-      fs-minipass: 3.0.3
-      glob: 11.0.3
-      lru-cache: 11.2.1
-      minipass: 7.1.2
-      minipass-collect: 2.0.1
-      minipass-flush: 1.0.5
-      minipass-pipeline: 1.2.4
-      p-map: 7.0.3
-      ssri: 12.0.0
-      unique-filename: 4.0.0
+    optional: true
 
   cacheable-lookup@7.0.0: {}
 
@@ -7912,6 +7647,11 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
+  debug@4.4.3:
+    dependencies:
+      ms: 2.1.3
+    optional: true
+
   decode-named-character-reference@1.2.0:
     dependencies:
       character-entities: 2.0.2
@@ -7980,7 +7720,7 @@ snapshots:
 
   detect-indent@6.1.0: {}
 
-  detect-libc@2.1.0:
+  detect-libc@2.1.2:
     optional: true
 
   detect-node@2.1.0: {}
@@ -8055,7 +7795,6 @@ snapshots:
   encoding@0.1.13:
     dependencies:
       iconv-lite: 0.6.3
-    optional: true
 
   end-of-stream@1.4.5:
     dependencies:
@@ -8290,7 +8029,8 @@ snapshots:
 
   expect-type@1.2.2: {}
 
-  exponential-backoff@3.1.2: {}
+  exponential-backoff@3.1.3:
+    optional: true
 
   extendable-error@0.1.7: {}
 
@@ -8401,6 +8141,7 @@ snapshots:
   fs-minipass@3.0.3:
     dependencies:
       minipass: 7.1.2
+    optional: true
 
   fsevents@2.3.3:
     optional: true
@@ -8527,9 +8268,9 @@ snapshots:
 
   gopd@1.2.0: {}
 
-  got@14.4.8:
+  got@14.4.9:
     dependencies:
-      '@sindresorhus/is': 7.0.2
+      '@sindresorhus/is': 7.1.0
       '@szmarczak/http-timer': 5.0.1
       cacheable-lookup: 7.0.0
       cacheable-request: 12.0.1
@@ -8562,13 +8303,9 @@ snapshots:
     dependencies:
       parse-passwd: 1.0.0
 
-  hosted-git-info@8.1.0:
-    dependencies:
-      lru-cache: 10.4.3
-
   hosted-git-info@9.0.0:
     dependencies:
-      lru-cache: 11.2.1
+      lru-cache: 11.2.2
 
   html-escaper@2.0.2: {}
 
@@ -8593,9 +8330,10 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.1
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   http2-wrapper@2.2.1:
     dependencies:
@@ -8605,9 +8343,10 @@ snapshots:
   https-proxy-agent@7.0.6:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.1
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   human-id@4.1.1: {}
 
@@ -8620,14 +8359,9 @@ snapshots:
   iconv-lite@0.7.0:
     dependencies:
       safer-buffer: 2.1.2
-    optional: true
 
   ieee754@1.2.1:
     optional: true
-
-  ignore-walk@8.0.0:
-    dependencies:
-      minimatch: 10.0.3
 
   ignore@5.3.2: {}
 
@@ -8658,7 +8392,8 @@ snapshots:
 
   ini@5.0.0: {}
 
-  ip-address@10.0.1: {}
+  ip-address@10.0.1:
+    optional: true
 
   is-alphabetical@2.0.1: {}
 
@@ -8911,6 +8646,8 @@ snapshots:
 
   lru-cache@11.2.1: {}
 
+  lru-cache@11.2.2: {}
+
   magic-string@0.30.19:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -8940,22 +8677,7 @@ snapshots:
       ssri: 12.0.0
     transitivePeerDependencies:
       - supports-color
-
-  make-fetch-happen@15.0.1:
-    dependencies:
-      '@npmcli/agent': 3.0.0
-      cacache: 20.0.1
-      http-cache-semantics: 4.2.0
-      minipass: 7.1.2
-      minipass-fetch: 4.0.1
-      minipass-flush: 1.0.5
-      minipass-pipeline: 1.2.4
-      negotiator: 1.0.0
-      proc-log: 5.0.0
-      promise-retry: 2.0.1
-      ssri: 12.0.0
-    transitivePeerDependencies:
-      - supports-color
+    optional: true
 
   markdown-it@14.1.0:
     dependencies:
@@ -9223,34 +8945,40 @@ snapshots:
   minipass-collect@2.0.1:
     dependencies:
       minipass: 7.1.2
+    optional: true
 
   minipass-fetch@4.0.1:
     dependencies:
       minipass: 7.1.2
       minipass-sized: 1.0.3
-      minizlib: 3.0.2
+      minizlib: 3.1.0
     optionalDependencies:
       encoding: 0.1.13
+    optional: true
 
   minipass-flush@1.0.5:
     dependencies:
       minipass: 3.3.6
+    optional: true
 
   minipass-pipeline@1.2.4:
     dependencies:
       minipass: 3.3.6
+    optional: true
 
   minipass-sized@1.0.3:
     dependencies:
       minipass: 3.3.6
+    optional: true
 
   minipass@3.3.6:
     dependencies:
       yallist: 4.0.0
+    optional: true
 
   minipass@7.1.2: {}
 
-  minizlib@3.0.2:
+  minizlib@3.1.0:
     dependencies:
       minipass: 7.1.2
 
@@ -9258,8 +8986,6 @@ snapshots:
     optional: true
 
   mkdirp@1.0.4: {}
-
-  mkdirp@3.0.1: {}
 
   moment-timezone@0.5.48:
     dependencies:
@@ -9303,9 +9029,10 @@ snapshots:
   negotiator@0.6.4:
     optional: true
 
-  negotiator@1.0.0: {}
+  negotiator@1.0.0:
+    optional: true
 
-  node-abi@3.77.0:
+  node-abi@3.78.0:
     dependencies:
       semver: 7.7.2
     optional: true
@@ -9322,17 +9049,18 @@ snapshots:
   node-gyp@11.4.2:
     dependencies:
       env-paths: 2.2.1
-      exponential-backoff: 3.1.2
+      exponential-backoff: 3.1.3
       graceful-fs: 4.2.11
       make-fetch-happen: 14.0.3
       nopt: 8.1.0
       proc-log: 5.0.0
       semver: 7.7.2
-      tar: 7.4.3
+      tar: 7.5.1
       tinyglobby: 0.2.15
       which: 5.0.0
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   node-releases@2.0.21: {}
 
@@ -9341,6 +9069,7 @@ snapshots:
   nopt@8.1.0:
     dependencies:
       abbrev: 3.0.1
+    optional: true
 
   normalize-url@8.1.0: {}
 
@@ -9354,13 +9083,6 @@ snapshots:
 
   npm-normalize-package-bin@4.0.0: {}
 
-  npm-package-arg@12.0.2:
-    dependencies:
-      hosted-git-info: 8.1.0
-      proc-log: 5.0.0
-      semver: 7.7.2
-      validate-npm-package-name: 6.0.2
-
   npm-package-arg@13.0.0:
     dependencies:
       hosted-git-info: 9.0.0
@@ -9368,42 +9090,12 @@ snapshots:
       semver: 7.7.2
       validate-npm-package-name: 6.0.2
 
-  npm-packlist@10.0.1:
-    dependencies:
-      ignore-walk: 8.0.0
-
-  npm-pick-manifest@10.0.0:
+  npm-pick-manifest@11.0.1:
     dependencies:
       npm-install-checks: 7.1.2
       npm-normalize-package-bin: 4.0.0
-      npm-package-arg: 12.0.2
-      semver: 7.7.2
-
-  npm-registry-fetch@18.0.2:
-    dependencies:
-      '@npmcli/redact': 3.2.2
-      jsonparse: 1.3.1
-      make-fetch-happen: 14.0.3
-      minipass: 7.1.2
-      minipass-fetch: 4.0.1
-      minizlib: 3.0.2
-      npm-package-arg: 12.0.2
-      proc-log: 5.0.0
-    transitivePeerDependencies:
-      - supports-color
-
-  npm-registry-fetch@19.0.0:
-    dependencies:
-      '@npmcli/redact': 3.2.2
-      jsonparse: 1.3.1
-      make-fetch-happen: 15.0.1
-      minipass: 7.1.2
-      minipass-fetch: 4.0.1
-      minizlib: 3.0.2
       npm-package-arg: 13.0.0
-      proc-log: 5.0.0
-    transitivePeerDependencies:
-      - supports-color
+      semver: 7.7.2
 
   nth-check@2.1.1:
     dependencies:
@@ -9479,7 +9171,8 @@ snapshots:
 
   p-map@2.1.0: {}
 
-  p-map@7.0.3: {}
+  p-map@7.0.3:
+    optional: true
 
   p-try@2.2.0: {}
 
@@ -9490,28 +9183,6 @@ snapshots:
       quansync: 0.2.11
 
   packageurl-js@1.0.2: {}
-
-  pacote@21.0.1:
-    dependencies:
-      '@npmcli/git': 6.0.3
-      '@npmcli/installed-package-contents': 3.0.0
-      '@npmcli/package-json': 7.0.0
-      '@npmcli/promise-spawn': 8.0.3
-      '@npmcli/run-script': 10.0.0
-      cacache: 20.0.1
-      fs-minipass: 3.0.3
-      minipass: 7.1.2
-      npm-package-arg: 13.0.0
-      npm-packlist: 10.0.1
-      npm-pick-manifest: 10.0.0
-      npm-registry-fetch: 19.0.0
-      proc-log: 5.0.0
-      promise-retry: 2.0.1
-      sigstore: 4.0.0
-      ssri: 12.0.0
-      tar: 7.4.3
-    transitivePeerDependencies:
-      - supports-color
 
   parent-module@1.0.1:
     dependencies:
@@ -9616,17 +9287,17 @@ snapshots:
 
   prebuild-install@7.1.3:
     dependencies:
-      detect-libc: 2.1.0
+      detect-libc: 2.1.2
       expand-template: 2.0.3
       github-from-package: 0.0.0
       minimist: 1.2.8
       mkdirp-classic: 0.5.3
       napi-build-utils: 2.0.0
-      node-abi: 3.77.0
+      node-abi: 3.78.0
       pump: 3.0.3
       rc: 1.2.8
       simple-get: 4.0.1
-      tar-fs: 2.1.3
+      tar-fs: 2.1.4
       tunnel-agent: 0.6.0
     optional: true
 
@@ -9836,7 +9507,7 @@ snapshots:
     dependencies:
       '@types/debug': 4.1.12
       '@types/validator': 13.15.3
-      debug: 4.4.1
+      debug: 4.4.3
       dottie: 2.0.6
       inflection: 1.13.4
       lodash: 4.17.21
@@ -9905,17 +9576,6 @@ snapshots:
 
   signal-exit@4.1.0: {}
 
-  sigstore@4.0.0:
-    dependencies:
-      '@sigstore/bundle': 4.0.0
-      '@sigstore/core': 3.0.0
-      '@sigstore/protobuf-specs': 0.5.0
-      '@sigstore/sign': 4.0.0
-      '@sigstore/tuf': 4.0.0
-      '@sigstore/verify': 3.0.0
-    transitivePeerDependencies:
-      - supports-color
-
   simple-concat@1.0.1:
     optional: true
 
@@ -9946,20 +9606,23 @@ snapshots:
       ansi-styles: 6.2.3
       is-fullwidth-code-point: 5.1.0
 
-  smart-buffer@4.2.0: {}
+  smart-buffer@4.2.0:
+    optional: true
 
   socks-proxy-agent@8.0.5:
     dependencies:
       agent-base: 7.1.4
-      debug: 4.4.1
+      debug: 4.4.3
       socks: 2.8.7
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   socks@2.8.7:
     dependencies:
       ip-address: 10.0.1
       smart-buffer: 4.2.0
+    optional: true
 
   source-map-js@1.2.1: {}
 
@@ -10066,7 +9729,7 @@ snapshots:
       string-width: 4.2.3
       strip-ansi: 6.0.1
 
-  tar-fs@2.1.3:
+  tar-fs@2.1.4:
     dependencies:
       chownr: 1.1.4
       mkdirp-classic: 0.5.3
@@ -10083,13 +9746,12 @@ snapshots:
       readable-stream: 3.6.2
     optional: true
 
-  tar@7.4.3:
+  tar@7.5.1:
     dependencies:
       '@isaacs/fs-minipass': 4.0.1
       chownr: 3.0.0
       minipass: 7.1.2
-      minizlib: 3.0.2
-      mkdirp: 3.0.1
+      minizlib: 3.1.0
       yallist: 5.0.0
 
   term-size@2.2.1: {}
@@ -10139,14 +9801,6 @@ snapshots:
     dependencies:
       typescript: 5.9.2
 
-  tuf-js@4.0.0:
-    dependencies:
-      '@tufjs/models': 4.0.0
-      debug: 4.4.1
-      make-fetch-happen: 15.0.1
-    transitivePeerDependencies:
-      - supports-color
-
   tunnel-agent@0.6.0:
     dependencies:
       safe-buffer: 5.2.1
@@ -10182,10 +9836,12 @@ snapshots:
   unique-filename@4.0.0:
     dependencies:
       unique-slug: 5.0.0
+    optional: true
 
   unique-slug@5.0.0:
     dependencies:
       imurmurhash: 0.1.4
+    optional: true
 
   universalify@0.1.2: {}
 
@@ -10373,7 +10029,8 @@ snapshots:
 
   y18n@5.0.8: {}
 
-  yallist@4.0.0: {}
+  yallist@4.0.0:
+    optional: true
 
   yallist@5.0.0: {}
 
