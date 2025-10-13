@@ -89,7 +89,7 @@ if [ "$TAG_OBJECT_TYPE" = "tag" ]; then
   echo "📌 Annotated tag references commit: $COMMIT_SHA"
 elif [ "$TAG_OBJECT_TYPE" = "commit" ]; then
   # Lightweight tag - directly references a commit
-  COMMIT_SHA=$TAG_OBJECT_SHA
+  COMMIT_SHA="$TAG_OBJECT_SHA"
   echo "📌 Lightweight tag directly references commit: $COMMIT_SHA"
 else
   echo "❌ Unexpected tag object type: $TAG_OBJECT_TYPE"
