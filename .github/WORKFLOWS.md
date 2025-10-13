@@ -21,10 +21,7 @@ graph LR
 
 ### Personal Access Token for Release Workflow
 
-The Main workflow creates GitHub releases that should trigger the Publish
-workflow. However, due to GitHub's security features, workflows triggered by
-the default `GITHUB_TOKEN` cannot trigger other workflows (this prevents
-infinite loops).
+The Main workflow creates GitHub releases that should trigger the Publish workflow. However, due to GitHub's security features, workflows triggered by the default `GITHUB_TOKEN` cannot trigger other workflows (this prevents infinite loops).
 
 **To enable the Publish workflow to trigger automatically:**
 
@@ -38,8 +35,7 @@ infinite loops).
    - Name: `RELEASE_TOKEN`
    - Value: Your PAT
 
-3. The Main workflow will automatically use `RELEASE_TOKEN` if available,
-   falling back to `GITHUB_TOKEN` if not configured.
+3. The Main workflow will automatically use `RELEASE_TOKEN` if available, falling back to `GITHUB_TOKEN` if not configured.
 
 ## Workflows
 
@@ -88,21 +84,19 @@ infinite loops).
 
 **Jobs**:
 
-- **npm**: Publishes to NPM (requires `ENABLE_NPM_RELEASE` variable and
-  `NPM_TOKEN` secret)
-- **docker**: Builds and publishes Docker images (requires
-  `ENABLE_DOCKER_RELEASE` variable)
+- **npm**: Publishes to NPM (requires `ENABLE_NPM_RELEASE` variable and `NPM_TOKEN` secret)
+- **docker**: Builds and publishes Docker images (requires `ENABLE_DOCKER_RELEASE` variable)
 
 ## Configuration
 
 ### Required Secrets
 
-| Secret               | Purpose                         | Required For    |
-| -------------------- | ------------------------------- | --------------- |
-| `RELEASE_TOKEN`      | PAT to trigger publish workflow | Auto-publish    |
-| `NPM_TOKEN`          | NPM authentication              | NPM publishing  |
-| `DOCKERHUB_USERNAME` | Docker Hub username             | Docker Hub push |
-| `DOCKERHUB_TOKEN`    | Docker Hub access token         | Docker Hub push |
+| Secret               | Purpose                                       | Required For    |
+| -------------------- | --------------------------------------------- | --------------- |
+| `RELEASE_TOKEN`      | PAT to trigger publish workflow from releases | Auto-publish    |
+| `NPM_TOKEN`          | NPM authentication                            | NPM publishing  |
+| `DOCKERHUB_USERNAME` | Docker Hub username                           | Docker Hub push |
+| `DOCKERHUB_TOKEN`    | Docker Hub access token                       | Docker Hub push |
 
 ### Repository Variables
 
