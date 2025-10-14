@@ -1,5 +1,13 @@
 # changelog-github-custom
 
+## 1.2.7
+
+### Patch Changes
+
+- [#29](https://github.com/sapientpants/changelog-github-custom/pull/29) [`b33d57d`](https://github.com/sapientpants/changelog-github-custom/commit/b33d57d4580e535afde1f0e884aa36fdf91156fd) - Fix GitHub release creation when Docker build is disabled
+
+  The create-release job was blocked when the docker job was skipped due to ENABLE_DOCKER_RELEASE not being set. Updated the conditional to properly handle skipped dependencies, allowing releases to be created even when optional build jobs (docker/npm) are disabled.
+
 ## 1.2.6
 
 ### Patch Changes
