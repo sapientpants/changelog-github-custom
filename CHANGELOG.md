@@ -1,5 +1,20 @@
 # changelog-github-custom
 
+## 1.2.6
+
+### Patch Changes
+
+- [#28](https://github.com/sapientpants/changelog-github-custom/pull/28) [`3600f6b`](https://github.com/sapientpants/changelog-github-custom/commit/3600f6bd69b23c560c31a7abc95937e886e696a5) - Fix critical build failure in Main workflow
+  - Build TypeScript before running changeset version to ensure custom changelog generator is available
+  - Add OSV scanner configuration to suppress false positive validator.js vulnerability in dev dependencies
+  - Resolve MODULE_NOT_FOUND error that was blocking releases since PR #26
+
+- [#26](https://github.com/sapientpants/changelog-github-custom/pull/26) [`32165ac`](https://github.com/sapientpants/changelog-github-custom/commit/32165acabd81e173c5de870d17c73a29e3abe9fd) - Fix CVE-2025-59343 vulnerability by updating @cyclonedx/cdxgen to 11.9.0
+
+- [#26](https://github.com/sapientpants/changelog-github-custom/pull/26) [`32165ac`](https://github.com/sapientpants/changelog-github-custom/commit/32165acabd81e173c5de870d17c73a29e3abe9fd) - Update pnpm to 10.17.0
+
+- [#12](https://github.com/sapientpants/changelog-github-custom/pull/12) [`444d399`](https://github.com/sapientpants/changelog-github-custom/commit/444d399b1f10d2435eed955606fbd2ae25021f4d) - Update README documentation
+
 ## 1.2.5
 
 ### Patch Changes
