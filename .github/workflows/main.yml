@@ -89,6 +89,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build TypeScript for changeset
+        # Build BEFORE versioning so custom changelog generator is available
+        run: |
+          pnpm build
+          echo "✅ Built TypeScript for changeset processing"
+
       - name: Version packages
         id: version
         env:
@@ -141,11 +147,12 @@ jobs:
           echo "sha=${TAG_SHA}" >> $GITHUB_OUTPUT
           echo "📌 Tag SHA for artifacts: ${TAG_SHA}"
 
-      - name: Build TypeScript
+      - name: Rebuild TypeScript after version bump
         if: steps.version.outputs.changed == 'true'
         run: |
+          # Rebuild after version bump to ensure dist includes updated version
           pnpm build
-          echo "✅ Built TypeScript once for entire workflow"
+          echo "✅ Rebuilt TypeScript with updated version"
 
       - name: Generate artifact manifest
         if: steps.version.outputs.changed == 'true'
