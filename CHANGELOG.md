@@ -1,5 +1,60 @@
 # changelog-github-custom
 
+## 1.2.7
+
+### Patch Changes
+
+- [#29](https://github.com/sapientpants/changelog-github-custom/pull/29) [`b33d57d`](https://github.com/sapientpants/changelog-github-custom/commit/b33d57d4580e535afde1f0e884aa36fdf91156fd) - Fix GitHub release creation when Docker build is disabled
+
+  The create-release job was blocked when the docker job was skipped due to ENABLE_DOCKER_RELEASE not being set. Updated the conditional to properly handle skipped dependencies, allowing releases to be created even when optional build jobs (docker/npm) are disabled.
+
+## 1.2.6
+
+### Patch Changes
+
+- [#28](https://github.com/sapientpants/changelog-github-custom/pull/28) [`3600f6b`](https://github.com/sapientpants/changelog-github-custom/commit/3600f6bd69b23c560c31a7abc95937e886e696a5) - Fix critical build failure in Main workflow
+  - Build TypeScript before running changeset version to ensure custom changelog generator is available
+  - Add OSV scanner configuration to suppress false positive validator.js vulnerability in dev dependencies
+  - Resolve MODULE_NOT_FOUND error that was blocking releases since PR #26
+
+- [#26](https://github.com/sapientpants/changelog-github-custom/pull/26) [`32165ac`](https://github.com/sapientpants/changelog-github-custom/commit/32165acabd81e173c5de870d17c73a29e3abe9fd) - Fix CVE-2025-59343 vulnerability by updating @cyclonedx/cdxgen to 11.9.0
+
+- [#26](https://github.com/sapientpants/changelog-github-custom/pull/26) [`32165ac`](https://github.com/sapientpants/changelog-github-custom/commit/32165acabd81e173c5de870d17c73a29e3abe9fd) - Update pnpm to 10.17.0
+
+- [#12](https://github.com/sapientpants/changelog-github-custom/pull/12) [`444d399`](https://github.com/sapientpants/changelog-github-custom/commit/444d399b1f10d2435eed955606fbd2ae25021f4d) - Update README documentation
+
+## 1.2.5
+
+### Patch Changes
+
+- [#11](https://github.com/sapientpants/changelog-github-custom/pull/11) [`e9def97`](https://github.com/sapientpants/changelog-github-custom/commit/e9def97e8578206c2ebc8c55e2b0b832082b9f12) - Add @changesets/get-github-info as dependency for enhanced GitHub integration capabilities
+
+## 1.2.4
+
+### Patch Changes
+
+- [#10](https://github.com/sapientpants/changelog-github-custom/pull/10) [`01b8cf1`](https://github.com/sapientpants/changelog-github-custom/commit/01b8cf1da34e9543ade6ed9545168a4e96f920dc) - Fix CommonJS module compatibility by removing type:module from package.json
+
+  Resolved an issue where the package would fail when loaded by changesets with the error "exports is not defined in ES module scope". The package.json had "type": "module" which caused Node.js to treat CommonJS files as ESM modules. Following the same approach as @changesets/changelog-github, removed the type field to allow proper dual module support.
+
+## 1.2.3
+
+### Patch Changes
+
+- [#9](https://github.com/sapientpants/changelog-github-custom/pull/9) [`a857c56`](https://github.com/sapientpants/changelog-github-custom/commit/a857c56fea377c3916da13ac117384c72d9d1771) - Add dual module support (ESM + CommonJS) for compatibility with changesets
+  - Configure separate TypeScript builds for ESM and CommonJS outputs
+  - Update package.json exports to support both require() and import
+  - Add dedicated build configs for each module format
+  - Update build:watch script to support the new build structure
+  - Fixes compatibility issue where changesets couldn't load the formatter using require()
+
+## 1.2.2
+
+### Patch Changes
+
+- [#8](https://github.com/sapientpants/changelog-github-custom/pull/8) [`95fb130`](https://github.com/sapientpants/changelog-github-custom/commit/95fb1309a1fb36afa72c4086430d65a9f72c36f6) - Update dev dependencies
+  - Updated @types/node from 24.3.3 to 24.4.0
+
 ## 1.2.1
 
 ### Patch Changes

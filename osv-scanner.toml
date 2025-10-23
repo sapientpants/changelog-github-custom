@@ -1,0 +1,27 @@
+# OSV Scanner Configuration
+# https://google.github.io/osv-scanner/configuration/
+
+# Ignored Vulnerabilities
+# Review and update regularly when fixes become available
+
+[[IgnoredVulns]]
+id = "GHSA-9965-vmph-33xx"
+# CVE-2025-56200: URL validation bypass in validator.js isURL() function
+#
+# Dependency chain: @cyclonedx/cdxgen -> sequelize -> validator@13.15.15
+#
+# Reason for ignoring:
+# - Dev dependency only (used for SBOM generation via @cyclonedx/cdxgen)
+# - Not used in production code or runtime
+# - Not exposed to user input
+# - Maintainer confirmed fix coming in next validator.js release
+# - Risk: Low (Medium severity, but isolated to dev tooling)
+#
+# Action items:
+# - Monitor: https://github.com/validatorjs/validator.js/issues/2600
+# - TODO: Remove this ignore when validator.js releases fix
+# - TODO: Update @cyclonedx/cdxgen after validator fix is released
+#
+# Added: 2025-10-14
+# Review: 2025-11-14 (30 days)
+reason = "Dev dependency for SBOM generation only. Not used in production. Awaiting upstream fix in validator.js."

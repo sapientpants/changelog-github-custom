@@ -7,6 +7,9 @@ settings:
 importers:
   .:
     dependencies:
+      '@changesets/get-github-info':
+        specifier: ^0.6.0
+        version: 0.6.0(encoding@0.1.13)
       '@changesets/types':
         specifier: ^6.1.0
         version: 6.1.0
