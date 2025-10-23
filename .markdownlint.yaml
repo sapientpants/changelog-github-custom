@@ -65,6 +65,7 @@ MD033:
     - div
     - span
     - kbd
+    - p
 
 # MD040/fenced-code-language - Fenced code blocks should have a language specified
 # Disabled as we sometimes have plain text blocks
