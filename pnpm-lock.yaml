@@ -17,9 +17,6 @@ importers:
       '@changesets/cli':
         specifier: ^2.29.7
         version: 2.29.7(@types/node@24.9.1)
-      '@changesets/get-github-info':
-        specifier: 0.6.0
-        version: 0.6.0(encoding@0.1.13)
       '@commitlint/cli':
         specifier: 20.1.0
         version: 20.1.0(@types/node@24.9.1)(typescript@5.9.3)
