@@ -12,3 +12,6 @@ dist/
 
 # Ignore aider chat history
 .aider.chat.history.md
+
+# Ignore all markdown files in root directory
+*.md
