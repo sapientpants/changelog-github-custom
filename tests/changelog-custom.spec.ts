@@ -374,5 +374,63 @@ describe('Custom Changelog Generator', () => {
       });
       expect(result).toContain('[`def5678`](https://github.com/owner/repo/commit/def5678)');
     });
+
+    // Test empty summary
+    it('should handle empty summary', async () => {
+      const changeset = {
+        id: 'test',
+        summary: '',
+        releases: [],
+      };
+      const result = await changelogFunctions.getReleaseLine(changeset, 'patch', {
+        repo: 'owner/repo',
+      });
+      expect(result).toBe('\n\n- \n');
+    });
+
+    // Test error handling
+    it('should handle getInfo errors gracefully', async () => {
+      getInfo.mockRejectedValueOnce(new Error('Network error'));
+      const changeset = {
+        id: 'test',
+        summary: 'Fix: Test',
+        releases: [],
+        commit: 'abc123',
+      };
+      const result = await changelogFunctions.getReleaseLine(changeset, 'patch', {
+        repo: 'owner/repo',
+      });
+      expect(result).toContain('Fix: Test');
+    });
+
+    // Test different release types
+    it('should handle major release type', async () => {
+      getInfo.mockResolvedValueOnce({
+        links: {
+          commit: '[`abc1234`](https://github.com/owner/repo/commit/abc1234)',
+          pull: null,
+          user: null,
+        },
+      });
+
+      const changeset = {
+        id: 'test',
+        summary: 'Fix: Fixed a bug',
+        releases: [],
+        commit: 'abc1234',
+      };
+
+      const result = await changelogFunctions.getReleaseLine(changeset, 'major', {
+        repo: 'owner/repo',
+      });
+
+      expect(getInfo).toHaveBeenCalledTimes(1);
+      expect(getInfo).toHaveBeenCalledWith({
+        repo: 'owner/repo',
+        commit: 'abc1234',
+      });
+      expect(result).toContain('[`abc1234`](https://github.com/owner/repo/commit/abc1234)');
+      expect(result).toContain('Fix: Fixed a bug');
+    });
   });
 });
