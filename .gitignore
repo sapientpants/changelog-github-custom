@@ -11,4 +11,3 @@ tmp/
 logs/
 test-logs/
 *.log
-.aider*
