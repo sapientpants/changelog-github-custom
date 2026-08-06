@@ -12,6 +12,7 @@ on:
     branches: [main]
   push:
     branches-ignore: [main]
+  workflow_dispatch:
 
 # Allow only one PR workflow per branch
 # cancel-in-progress: true cancels old runs when new commits are pushed
