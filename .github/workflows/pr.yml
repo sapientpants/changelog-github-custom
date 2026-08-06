@@ -10,6 +10,8 @@ name: PR
 on:
   pull_request:
     branches: [main]
+  push:
+    branches-ignore: [main]
 
 # Allow only one PR workflow per branch
 # cancel-in-progress: true cancels old runs when new commits are pushed
