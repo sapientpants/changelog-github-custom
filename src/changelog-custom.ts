@@ -89,9 +89,8 @@ const changelogFunctions: ChangelogFunctions = {
             commit: commitToFetchFrom,
           });
           return links;
-        } catch (error) {
+        } catch {
           // Handle getInfo errors gracefully as expected by tests
-          console.error('Error fetching info from GitHub:', error);
           return {
             commit: null,
             pull: null,
