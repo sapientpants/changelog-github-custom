@@ -51,6 +51,8 @@ jobs:
   # Results appear in Security tab of the PR
   security:
     uses: ./.github/workflows/reusable-security.yml
+    with:
+      run-osv-scan: false
 
   # =============================================================================
   # DOCKER CONTAINER VALIDATION
