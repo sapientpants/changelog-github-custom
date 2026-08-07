@@ -8,7 +8,8 @@ overrides:
   tar: '>=7.5.19'
   glob@<11.1.0: '>=11.1.0'
   sequelize@<6.37.8: '>=6.37.8'
-  js-yaml@<4.3.1: '>=4.3.1'
+  js-yaml: 4.3.1
+  read-yaml-file: 3.0.0
   jsonata@<2.2.0: '>=2.2.0'
   body-parser@<2.2.1: '>=2.2.1'
   markdown-it@<14.1.2: '>=14.1.2'
@@ -4151,13 +4152,6 @@ packages:
       }
     engines: { node: '>=12' }
 
-  pify@4.0.1:
-    resolution:
-      {
-        integrity: sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==,
-      }
-    engines: { node: '>=6' }
-
   please-upgrade-node@3.2.0:
     resolution:
       {
@@ -4262,12 +4256,12 @@ packages:
       }
     engines: { node: ^20.17.0 || >=22.9.0 }
 
-  read-yaml-file@1.1.0:
+  read-yaml-file@3.0.0:
     resolution:
       {
-        integrity: sha512-VIMnQi/Z4HT2Fxuwg5KrY174U1VdUIASQVWXXyqtNRtxSr9IYkn1rsI6Tb6HsrHCmB7gVpNwX6JxPTHcH6IoTA==,
+        integrity: sha512-7urDNDyx3oJt9NGkymzT3qudju76BoJhT6ICWclx6274zxMeSUOhyiceHscSBk4Lfbs0IYpjOjUwLkaOzrsJdQ==,
       }
-    engines: { node: '>=6' }
+    engines: { node: '>=22.13' }
 
   readdirp@3.6.0:
     resolution:
@@ -4621,12 +4615,12 @@ packages:
       }
     engines: { node: '>=12' }
 
-  strip-bom@3.0.0:
+  strip-bom@5.0.0:
     resolution:
       {
-        integrity: sha512-vavAMRXOgBVNF6nyEEmL3DBK19iRpDcoIwW+swQ+CbGiu7lju6t+JklA1MHweoWtadgt4ISVUsXLyDq34ddcwA==,
+        integrity: sha512-p+byADHF7SzEcVnLvc/r3uognM1hUhObuHXxJcgLCfD194XAkaLbjq3Wzb0N5G2tgIjH0dgT708Z51QxMeu60A==,
       }
-    engines: { node: '>=4' }
+    engines: { node: '>=12' }
 
   strip-indent@4.1.1:
     resolution:
@@ -5770,7 +5764,7 @@ snapshots:
       '@manypkg/find-root': 1.1.0
       fs-extra: 8.1.0
       globby: 11.1.0
-      read-yaml-file: 1.1.0
+      read-yaml-file: 3.0.0
 
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     optional: true
@@ -7703,8 +7697,6 @@ snapshots:
 
   picomatch@4.0.5: {}
 
-  pify@4.0.1: {}
-
   please-upgrade-node@3.2.0:
     dependencies:
       semver-compare: 1.0.0
@@ -7756,12 +7748,10 @@ snapshots:
       json-parse-even-better-errors: 5.0.0
       npm-normalize-package-bin: 5.0.0
 
-  read-yaml-file@1.1.0:
+  read-yaml-file@3.0.0:
     dependencies:
-      graceful-fs: 4.2.11
       js-yaml: 4.3.1
-      pify: 4.0.1
-      strip-bom: 3.0.0
+      strip-bom: 5.0.0
 
   readdirp@3.6.0:
     dependencies:
@@ -7978,7 +7968,7 @@ snapshots:
     dependencies:
       ansi-regex: 6.2.2
 
-  strip-bom@3.0.0: {}
+  strip-bom@5.0.0: {}
 
   strip-indent@4.1.1: {}
 
