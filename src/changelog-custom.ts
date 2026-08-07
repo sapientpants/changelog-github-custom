@@ -83,11 +83,20 @@ const changelogFunctions: ChangelogFunctions = {
       }
       const commitToFetchFrom = commitFromSummary || changeset.commit;
       if (commitToFetchFrom) {
-        const { links } = await getInfo({
-          repo: opts.repo,
-          commit: commitToFetchFrom,
-        });
-        return links;
+        try {
+          const { links } = await getInfo({
+            repo: opts.repo,
+            commit: commitToFetchFrom,
+          });
+          return links;
+        } catch {
+          // Handle getInfo errors gracefully as expected by tests
+          return {
+            commit: null,
+            pull: null,
+            user: null,
+          };
+        }
       }
       return {
         commit: null,

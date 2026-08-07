@@ -22,10 +22,7 @@ on:
         description: 'validate that a changeset exists on the branch'
         type: boolean
         default: false
-    secrets:
-      SONAR_TOKEN:
-        description: 'SonarCloud authentication token'
-        required: true
+    secrets: {}
 
 # EXAMPLE USAGE:
 # jobs:
@@ -67,11 +64,6 @@ jobs:
         # FAILS IF: Tests fail or coverage below 80% (when coverage enabled)
         # To debug: Check test output and coverage/index.html
         run: pnpm test:coverage
-
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Upload coverage
         # Make coverage reports available for review

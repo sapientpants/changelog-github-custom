@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+# Check if --no-verify was used
+if [ "$GIT_NO_VERIFY" = "1" ]; then
+  echo "Error: --no-verify flag is not allowed. All commits must pass pre-commit hooks."
+  exit 1
+fi
+
+# Run the same checks as pre-commit
+pnpm precommit

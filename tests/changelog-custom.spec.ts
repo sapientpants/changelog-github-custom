@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import changelogFunctions from '../src/changelog-custom.js';
 
-// Mock the @changesets/get-github-info module
 vi.mock('@changesets/get-github-info', () => ({
   getInfo: vi.fn(),
   getInfoFromPullRequest: vi.fn(),
@@ -78,6 +77,15 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
+      expect(getInfo).toHaveBeenCalledTimes(2);
+      expect(getInfo).toHaveBeenNthCalledWith(1, {
+        repo: 'owner/repo',
+        commit: 'abc1234',
+      });
+      expect(getInfo).toHaveBeenNthCalledWith(2, {
+        repo: 'owner/repo',
+        commit: 'def5678',
+      });
       expect(result).toContain('Updated dependencies');
       expect(result).toContain('[`abc1234`](https://github.com/owner/repo/commit/abc1234)');
       expect(result).toContain('[`def5678`](https://github.com/owner/repo/commit/def5678)');
@@ -115,6 +123,12 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
+      expect(getInfo).toHaveBeenCalledTimes(1);
+      expect(getInfo).toHaveBeenCalledWith({
+        repo: 'owner/repo',
+        commit: 'def5678',
+      });
+      expect(result).toContain('Updated dependencies');
       expect(result).toContain('[`def5678`](https://github.com/owner/repo/commit/def5678)');
       expect(result).toContain('package-a@1.2.3');
     });
@@ -158,6 +172,11 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
+      expect(getInfo).toHaveBeenCalledTimes(1);
+      expect(getInfo).toHaveBeenCalledWith({
+        repo: 'owner/repo',
+        commit: 'abc1234',
+      });
       expect(result).toContain('Fix: Fixed a bug in the system');
       expect(result).toContain('[`abc1234`](https://github.com/owner/repo/commit/abc1234)');
     });
@@ -208,6 +227,11 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
+      expect(getInfoFromPullRequest).toHaveBeenCalledTimes(1);
+      expect(getInfoFromPullRequest).toHaveBeenCalledWith({
+        repo: 'owner/repo',
+        pull: 123,
+      });
       expect(result).toContain('[#123](https://github.com/owner/repo/pull/123)');
       expect(result).toContain(
         '[`abcdef1`](https://github.com/owner/repo/commit/abcdef1234567890)',
@@ -233,6 +257,12 @@ describe('Custom Changelog Generator', () => {
 
       const result = await changelogFunctions.getReleaseLine(changeset, 'patch', {
         repo: 'owner/repo',
+      });
+
+      expect(getInfo).toHaveBeenCalledTimes(1);
+      expect(getInfo).toHaveBeenCalledWith({
+        repo: 'owner/repo',
+        commit: 'abc1234',
       });
 
       // Should not contain user attribution
@@ -263,6 +293,11 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
+      expect(getInfo).toHaveBeenCalledTimes(1);
+      expect(getInfo).toHaveBeenCalledWith({
+        repo: 'owner/repo',
+        commit: 'abc1234',
+      });
       expect(result).toContain('Fix: Fixed a bug');
       expect(result).toContain('This is additional information');
       expect(result).toContain('about the fix');
@@ -302,6 +337,11 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
+      expect(getInfoFromPullRequest).toHaveBeenCalledTimes(1);
+      expect(getInfoFromPullRequest).toHaveBeenCalledWith({
+        repo: 'owner/repo',
+        pull: 123,
+      });
       expect(result).toContain('[#123](https://github.com/owner/repo/pull/123)');
       expect(result).toContain('[`newcomm`](https://github.com/owner/repo/commit/newcommit123)');
       expect(result).toContain('Fix: Fixed a bug');
@@ -327,11 +367,70 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
+      expect(getInfo).toHaveBeenCalledTimes(1);
       expect(getInfo).toHaveBeenCalledWith({
         repo: 'owner/repo',
         commit: 'def5678',
       });
       expect(result).toContain('[`def5678`](https://github.com/owner/repo/commit/def5678)');
+    });
+
+    // Test empty summary
+    it('should handle empty summary', async () => {
+      const changeset = {
+        id: 'test',
+        summary: '',
+        releases: [],
+      };
+      const result = await changelogFunctions.getReleaseLine(changeset, 'patch', {
+        repo: 'owner/repo',
+      });
+      expect(result).toBe('\n\n- \n');
+    });
+
+    // Test error handling
+    it('should handle getInfo errors gracefully', async () => {
+      getInfo.mockRejectedValueOnce(new Error('Network error'));
+      const changeset = {
+        id: 'test',
+        summary: 'Fix: Test',
+        releases: [],
+        commit: 'abc123',
+      };
+      const result = await changelogFunctions.getReleaseLine(changeset, 'patch', {
+        repo: 'owner/repo',
+      });
+      expect(result).toContain('Fix: Test');
+    });
+
+    // Test different release types
+    it('should handle major release type', async () => {
+      getInfo.mockResolvedValueOnce({
+        links: {
+          commit: '[`abc1234`](https://github.com/owner/repo/commit/abc1234)',
+          pull: null,
+          user: null,
+        },
+      });
+
+      const changeset = {
+        id: 'test',
+        summary: 'Fix: Fixed a bug',
+        releases: [],
+        commit: 'abc1234',
+      };
+
+      const result = await changelogFunctions.getReleaseLine(changeset, 'major', {
+        repo: 'owner/repo',
+      });
+
+      expect(getInfo).toHaveBeenCalledTimes(1);
+      expect(getInfo).toHaveBeenCalledWith({
+        repo: 'owner/repo',
+        commit: 'abc1234',
+      });
+      expect(result).toContain('[`abc1234`](https://github.com/owner/repo/commit/abc1234)');
+      expect(result).toContain('Fix: Fixed a bug');
     });
   });
 });

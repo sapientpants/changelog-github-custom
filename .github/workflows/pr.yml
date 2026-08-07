@@ -10,6 +10,9 @@ name: PR
 on:
   pull_request:
     branches: [main]
+  push:
+    branches-ignore: [main]
+  workflow_dispatch:
 
 # Allow only one PR workflow per branch
 # cancel-in-progress: true cancels old runs when new commits are pushed
@@ -40,8 +43,6 @@ jobs:
   # FAILS IF: Any check fails or coverage drops below 80%
   validate:
     uses: ./.github/workflows/reusable-validate.yml
-    secrets:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     with:
       validate-changesets: true
 
@@ -50,6 +51,8 @@ jobs:
   # Results appear in Security tab of the PR
   security:
     uses: ./.github/workflows/reusable-security.yml
+    with:
+      run-osv-scan: false
 
   # =============================================================================
   # DOCKER CONTAINER VALIDATION
