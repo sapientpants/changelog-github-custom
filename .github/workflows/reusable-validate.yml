@@ -22,7 +22,7 @@ on:
         description: 'validate that a changeset exists on the branch'
         type: boolean
         default: false
-     secrets: {}
+    secrets: {}
 
 # EXAMPLE USAGE:
 # jobs:
