@@ -132,33 +132,16 @@ jobs:
             echo "Package contains $(wc -l < ./npm-artifact/npm-package-manifest.txt) files"
           fi
 
-      - name: Check NPM token
-        id: check-npm
-        # Gracefully handle missing NPM_TOKEN
-        # Allows workflow to succeed even without npm publishing
-        run: |
-          if [ -n "${{ secrets.NPM_TOKEN }}" ]; then
-            echo "has_token=true" >> $GITHUB_OUTPUT
-            echo "✅ NPM_TOKEN is configured"
-          else
-            echo "has_token=false" >> $GITHUB_OUTPUT
-            echo "⚠️ NPM_TOKEN is not configured, skipping publish"
-            # To fix: Add NPM_TOKEN secret in Settings > Secrets
-          fi
-
       - name: Publish to NPM
-        if: steps.check-npm.outputs.has_token == 'true'
         run: |
           # Remove private flag and prepare script (which runs husky)
           # The prepare script runs even with --ignore-scripts, so we must remove it
           jq 'del(.private) | del(.scripts.prepare)' package.json > tmp.json && mv tmp.json package.json
 
           # Publish with provenance for supply chain security
+          # Uses GitHub OIDC for authentication (no NPM_TOKEN needed)
           # --provenance creates a signed attestation of the build
           npm publish --provenance --access public
-        env:
-          # SECURITY: NPM_TOKEN required for authentication
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   # =============================================================================
   # GITHUB PACKAGES PUBLISHING
