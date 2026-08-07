@@ -31,12 +31,12 @@
     "README.md",
     "LICENSE"
   ],
-  "packageManager": "pnpm@10.17.0",
+  "packageManager": "pnpm@11.20.0",
   "publishConfig": {
     "access": "public"
   },
   "engines": {
-    "node": ">=22.0.0"
+    "node": ">=24.0.0"
   },
   "scripts": {
     "dev": "tsc --watch --preserveWatchOutput",
@@ -68,7 +68,7 @@
     "deps:check": "depcheck",
     "reset": "pnpm clean && pnpm install",
     "quick-check": "pnpm typecheck && pnpm lint && pnpm test",
-    "precommit": "pnpm audit --audit-level critical && pnpm deps:check && pnpm typecheck && pnpm lint && pnpm lint:workflows && pnpm lint:markdown && pnpm lint:yaml && pnpm format && pnpm test",
+    "precommit": "pnpm audit --audit-level high && pnpm deps:check && pnpm typecheck && pnpm lint && pnpm lint:workflows && pnpm lint:markdown && pnpm lint:yaml && pnpm format && pnpm test",
     "verify": "pnpm precommit",
     "setup": "./scripts/setup.sh",
     "lint-staged": "lint-staged",
