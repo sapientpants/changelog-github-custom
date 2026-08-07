@@ -15,6 +15,7 @@
     "url": "https://github.com/sapientpants/changelog-github-custom.git"
   },
   "private": false,
+  "type": "module",
   "main": "./dist/cjs/changelog-custom.js",
   "module": "./dist/esm/changelog-custom.js",
   "types": "./dist/types/changelog-custom.d.ts",
