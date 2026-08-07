@@ -43,8 +43,6 @@ jobs:
   # FAILS IF: Any check fails or coverage drops below 80%
   validate:
     uses: ./.github/workflows/reusable-validate.yml
-    secrets:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     with:
       validate-changesets: true
 
