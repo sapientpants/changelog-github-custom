@@ -74,7 +74,7 @@ pnpm install --frozen-lockfile
 log "Running core validation checks..."
 
 echo "  → Audit check..."
-pnpm audit --audit-level critical
+pnpm audit --audit-level high
 
 echo "  → Type checking..."
 pnpm typecheck
