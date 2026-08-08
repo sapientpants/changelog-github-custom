@@ -225,7 +225,7 @@ jobs:
         # Scans for vulnerabilities, secrets, misconfigurations, and licenses
         # License findings are informational only (see LICENSES.md)
         if: steps.build-config.outputs.can_load == 'true' || !contains(inputs.platforms, ',')
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           input: ${{ steps.scan-config.outputs.scan_input }}
           image-ref: ${{ steps.scan-config.outputs.scan_image_ref }}
