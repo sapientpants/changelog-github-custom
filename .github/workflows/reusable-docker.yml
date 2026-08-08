@@ -66,12 +66,12 @@ jobs:
       artifact-name: ${{ inputs.artifact-name }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Download build artifact
         # Download pre-built TypeScript if artifact name provided
         if: inputs.build_artifact != ''
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: ${{ inputs.build_artifact }}
 
@@ -269,7 +269,7 @@ jobs:
       - name: Upload Trivy SARIF as artifact
         # Upload SARIF file as artifact for debugging and inspection
         if: always() && (steps.build-config.outputs.can_load == 'true' || !contains(inputs.platforms, ','))
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: trivy-${{ github.sha }}
           path: trivy-results.sarif
@@ -295,7 +295,7 @@ jobs:
         # Store single-platform image tar for deterministic publishing
         # Multi-platform images are stored in GHCR registry
         if: inputs.save-artifact && !contains(inputs.platforms, ',')
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ inputs.artifact-name }}-${{ inputs.tag_sha || github.sha }}
           path: ${{ inputs.artifact-name }}-${{ inputs.tag_sha || github.sha }}.tar.gz
