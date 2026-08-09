@@ -110,7 +110,7 @@
     "@changesets/types": "6.1.0",
     "@commitlint/cli": "20.1.0",
     "@commitlint/config-conventional": "20.0.0",
-    "@cyclonedx/cdxgen": "11.10.0",
+    "@cyclonedx/cdxgen": "^12.8.2",
     "@types/node": "^24.13.3",
     "@typescript-eslint/eslint-plugin": "^8.66.0",
     "@typescript-eslint/parser": "^8.66.0",
