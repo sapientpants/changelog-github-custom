@@ -84,7 +84,7 @@ The Main workflow creates GitHub releases that should trigger the Publish workfl
 
 **Jobs**:
 
-- **npm**: Publishes to NPM (requires `ENABLE_NPM_RELEASE` variable and `NPM_TOKEN` secret)
+- **npm**: Publishes to NPM (requires `ENABLE_NPM_RELEASE` variable)
 - **docker**: Builds and publishes Docker images (requires `ENABLE_DOCKER_RELEASE` variable)
 
 ## Configuration
@@ -94,7 +94,6 @@ The Main workflow creates GitHub releases that should trigger the Publish workfl
 | Secret               | Purpose                                       | Required For    |
 | -------------------- | --------------------------------------------- | --------------- |
 | `RELEASE_TOKEN`      | PAT to trigger publish workflow from releases | Auto-publish    |
-| `NPM_TOKEN`          | NPM authentication                            | NPM publishing  |
 | `DOCKERHUB_USERNAME` | Docker Hub username                           | Docker Hub push |
 | `DOCKERHUB_TOKEN`    | Docker Hub access token                       | Docker Hub push |
 
@@ -116,13 +115,7 @@ Create a fine-grained PAT with:
 
 Add as `RELEASE_TOKEN` secret.
 
-### 2. Configure NPM Publishing
-
-1. Get NPM token from npmjs.com
-2. Add as `NPM_TOKEN` secret
-3. Set `ENABLE_NPM_RELEASE=true` variable
-
-### 3. Enable Docker Distribution (Optional)
+### 2. Enable Docker Distribution (Optional)
 
 1. Set `ENABLE_DOCKER_RELEASE=true` variable
 2. Add Docker Hub credentials if using Docker Hub
@@ -152,7 +145,6 @@ Add as `RELEASE_TOKEN` secret.
 
 ### NPM Publish Failing
 
-- Verify `NPM_TOKEN` is valid
 - Check `ENABLE_NPM_RELEASE` variable is set to `true`
 - Ensure package.json version doesn't already exist
 
