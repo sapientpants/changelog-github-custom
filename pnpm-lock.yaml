@@ -31,7 +31,7 @@ importers:
         version: 7.0.0
     devDependencies:
       '@changesets/cli':
-        specifier: ^3.0.0
+        specifier: 3.0.1
         version: 3.0.1
       '@commitlint/cli':
         specifier: 21.2.2
