@@ -2,7 +2,6 @@
   "ignores": [
     "@changesets/cli",
     "@commitlint/*",
-    "@cyclonedx/cdxgen",
     "@typescript-eslint/*",
     "@vitest/coverage-v8",
     "eslint-*",
