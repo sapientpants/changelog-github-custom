@@ -2,19 +2,19 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import changelogFunctions from '../src/changelog-custom.js';
 
 vi.mock('@changesets/get-github-info', () => ({
-  getInfo: vi.fn(),
-  getInfoFromPullRequest: vi.fn(),
+  getCommitInfo: vi.fn(),
+  getPullRequestInfo: vi.fn(),
 }));
 
 describe('Custom Changelog Generator', () => {
-  let getInfo: ReturnType<typeof vi.fn>;
-  let getInfoFromPullRequest: ReturnType<typeof vi.fn>;
+  let getCommitInfo: ReturnType<typeof vi.fn>;
+  let getPullRequestInfo: ReturnType<typeof vi.fn>;
 
   beforeEach(async () => {
     vi.clearAllMocks();
     const githubInfo = await import('@changesets/get-github-info');
-    getInfo = githubInfo.getInfo as ReturnType<typeof vi.fn>;
-    getInfoFromPullRequest = githubInfo.getInfoFromPullRequest as ReturnType<typeof vi.fn>;
+    getCommitInfo = githubInfo.getCommitInfo as ReturnType<typeof vi.fn>;
+    getPullRequestInfo = githubInfo.getPullRequestInfo as ReturnType<typeof vi.fn>;
   });
 
   describe('getDependencyReleaseLine', () => {
@@ -32,18 +32,18 @@ describe('Custom Changelog Generator', () => {
     });
 
     it('should format dependency updates with commit links', async () => {
-      getInfo.mockResolvedValueOnce({
-        links: {
-          commit: '[`abc1234`](https://github.com/owner/repo/commit/abc1234)',
-          pull: null,
-          user: null,
+      getCommitInfo.mockResolvedValueOnce({
+        commit: {
+          sha: 'abc1234',
+          url: 'https://github.com/owner/repo/commit/abc1234',
+          markdownLink: '[`abc1234`](https://github.com/owner/repo/commit/abc1234)',
         },
       });
-      getInfo.mockResolvedValueOnce({
-        links: {
-          commit: '[`def5678`](https://github.com/owner/repo/commit/def5678)',
-          pull: null,
-          user: null,
+      getCommitInfo.mockResolvedValueOnce({
+        commit: {
+          sha: 'def5678',
+          url: 'https://github.com/owner/repo/commit/def5678',
+          markdownLink: '[`def5678`](https://github.com/owner/repo/commit/def5678)',
         },
       });
 
@@ -77,12 +77,12 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
-      expect(getInfo).toHaveBeenCalledTimes(2);
-      expect(getInfo).toHaveBeenNthCalledWith(1, {
+      expect(getCommitInfo).toHaveBeenCalledTimes(2);
+      expect(getCommitInfo).toHaveBeenNthCalledWith(1, {
         repo: 'owner/repo',
         commit: 'abc1234',
       });
-      expect(getInfo).toHaveBeenNthCalledWith(2, {
+      expect(getCommitInfo).toHaveBeenNthCalledWith(2, {
         repo: 'owner/repo',
         commit: 'def5678',
       });
@@ -99,11 +99,11 @@ describe('Custom Changelog Generator', () => {
         { id: 'changeset2', summary: 'Test', releases: [], commit: 'def5678' },
       ];
 
-      getInfo.mockResolvedValueOnce({
-        links: {
-          commit: '[`def5678`](https://github.com/owner/repo/commit/def5678)',
-          pull: null,
-          user: null,
+      getCommitInfo.mockResolvedValueOnce({
+        commit: {
+          sha: 'def5678',
+          url: 'https://github.com/owner/repo/commit/def5678',
+          markdownLink: '[`def5678`](https://github.com/owner/repo/commit/def5678)',
         },
       });
 
@@ -123,8 +123,8 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
-      expect(getInfo).toHaveBeenCalledTimes(1);
-      expect(getInfo).toHaveBeenCalledWith({
+      expect(getCommitInfo).toHaveBeenCalledTimes(1);
+      expect(getCommitInfo).toHaveBeenCalledWith({
         repo: 'owner/repo',
         commit: 'def5678',
       });
@@ -153,11 +153,11 @@ describe('Custom Changelog Generator', () => {
     });
 
     it('should format basic changeset with commit', async () => {
-      getInfo.mockResolvedValueOnce({
-        links: {
-          commit: '[`abc1234`](https://github.com/owner/repo/commit/abc1234)',
-          pull: null,
-          user: null,
+      getCommitInfo.mockResolvedValueOnce({
+        commit: {
+          sha: 'abc1234',
+          url: 'https://github.com/owner/repo/commit/abc1234',
+          markdownLink: '[`abc1234`](https://github.com/owner/repo/commit/abc1234)',
         },
       });
 
@@ -172,8 +172,8 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
-      expect(getInfo).toHaveBeenCalledTimes(1);
-      expect(getInfo).toHaveBeenCalledWith({
+      expect(getCommitInfo).toHaveBeenCalledTimes(1);
+      expect(getCommitInfo).toHaveBeenCalledWith({
         repo: 'owner/repo',
         commit: 'abc1234',
       });
@@ -182,11 +182,16 @@ describe('Custom Changelog Generator', () => {
     });
 
     it('should extract and use PR number from summary', async () => {
-      getInfoFromPullRequest.mockResolvedValueOnce({
-        links: {
-          commit: null,
-          pull: '[#123](https://github.com/owner/repo/pull/123)',
-          user: '[@user](https://github.com/user)',
+      getPullRequestInfo.mockResolvedValueOnce({
+        pull: {
+          number: 123,
+          url: 'https://github.com/owner/repo/pull/123',
+          markdownLink: '[#123](https://github.com/owner/repo/pull/123)',
+        },
+        author: {
+          login: 'user',
+          url: 'https://github.com/user',
+          markdownLink: '[@user](https://github.com/user)',
         },
       });
 
@@ -200,7 +205,7 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
-      expect(getInfoFromPullRequest).toHaveBeenCalledWith({
+      expect(getPullRequestInfo).toHaveBeenCalledWith({
         repo: 'owner/repo',
         pull: 123,
       });
@@ -209,11 +214,21 @@ describe('Custom Changelog Generator', () => {
     });
 
     it('should extract commit from summary and override with short commit in PR links', async () => {
-      getInfoFromPullRequest.mockResolvedValueOnce({
-        links: {
-          commit: null,
-          pull: '[#123](https://github.com/owner/repo/pull/123)',
-          user: '[@user](https://github.com/user)',
+      getPullRequestInfo.mockResolvedValueOnce({
+        pull: {
+          number: 123,
+          url: 'https://github.com/owner/repo/pull/123',
+          markdownLink: '[#123](https://github.com/owner/repo/pull/123)',
+        },
+        author: {
+          login: 'user',
+          url: 'https://github.com/user',
+          markdownLink: '[@user](https://github.com/user)',
+        },
+        commit: {
+          sha: 'existing',
+          url: 'https://github.com/owner/repo/commit/existing',
+          markdownLink: '[`existing`](https://github.com/owner/repo/commit/existing)',
         },
       });
 
@@ -227,8 +242,8 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
-      expect(getInfoFromPullRequest).toHaveBeenCalledTimes(1);
-      expect(getInfoFromPullRequest).toHaveBeenCalledWith({
+      expect(getPullRequestInfo).toHaveBeenCalledTimes(1);
+      expect(getPullRequestInfo).toHaveBeenCalledWith({
         repo: 'owner/repo',
         pull: 123,
       });
@@ -240,11 +255,16 @@ describe('Custom Changelog Generator', () => {
     });
 
     it('should ignore user/author mentions in summary', async () => {
-      getInfo.mockResolvedValueOnce({
-        links: {
-          commit: '[`abc1234`](https://github.com/owner/repo/commit/abc1234)',
-          pull: null,
-          user: '[@defaultuser](https://github.com/defaultuser)',
+      getCommitInfo.mockResolvedValueOnce({
+        commit: {
+          sha: 'abc1234',
+          url: 'https://github.com/owner/repo/commit/abc1234',
+          markdownLink: '[`abc1234`](https://github.com/owner/repo/commit/abc1234)',
+        },
+        author: {
+          login: 'defaultuser',
+          url: 'https://github.com/defaultuser',
+          markdownLink: '[@defaultuser](https://github.com/defaultuser)',
         },
       });
 
@@ -259,8 +279,8 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
-      expect(getInfo).toHaveBeenCalledTimes(1);
-      expect(getInfo).toHaveBeenCalledWith({
+      expect(getCommitInfo).toHaveBeenCalledTimes(1);
+      expect(getCommitInfo).toHaveBeenCalledWith({
         repo: 'owner/repo',
         commit: 'abc1234',
       });
@@ -274,11 +294,11 @@ describe('Custom Changelog Generator', () => {
     });
 
     it('should handle multiline summaries', async () => {
-      getInfo.mockResolvedValueOnce({
-        links: {
-          commit: '[`abc1234`](https://github.com/owner/repo/commit/abc1234)',
-          pull: null,
-          user: null,
+      getCommitInfo.mockResolvedValueOnce({
+        commit: {
+          sha: 'abc1234',
+          url: 'https://github.com/owner/repo/commit/abc1234',
+          markdownLink: '[`abc1234`](https://github.com/owner/repo/commit/abc1234)',
         },
       });
 
@@ -293,8 +313,8 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
-      expect(getInfo).toHaveBeenCalledTimes(1);
-      expect(getInfo).toHaveBeenCalledWith({
+      expect(getCommitInfo).toHaveBeenCalledTimes(1);
+      expect(getCommitInfo).toHaveBeenCalledWith({
         repo: 'owner/repo',
         commit: 'abc1234',
       });
@@ -319,11 +339,21 @@ describe('Custom Changelog Generator', () => {
     });
 
     it('should handle both PR and commit links', async () => {
-      getInfoFromPullRequest.mockResolvedValueOnce({
-        links: {
-          commit: '[`existing`](https://github.com/owner/repo/commit/existing)',
-          pull: '[#123](https://github.com/owner/repo/pull/123)',
-          user: null,
+      getPullRequestInfo.mockResolvedValueOnce({
+        pull: {
+          number: 123,
+          url: 'https://github.com/owner/repo/pull/123',
+          markdownLink: '[#123](https://github.com/owner/repo/pull/123)',
+        },
+        author: {
+          login: 'user',
+          url: 'https://github.com/user',
+          markdownLink: '[@user](https://github.com/user)',
+        },
+        commit: {
+          sha: 'existing',
+          url: 'https://github.com/owner/repo/commit/existing',
+          markdownLink: '[`existing`](https://github.com/owner/repo/commit/existing)',
         },
       });
 
@@ -337,8 +367,8 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
-      expect(getInfoFromPullRequest).toHaveBeenCalledTimes(1);
-      expect(getInfoFromPullRequest).toHaveBeenCalledWith({
+      expect(getPullRequestInfo).toHaveBeenCalledTimes(1);
+      expect(getPullRequestInfo).toHaveBeenCalledWith({
         repo: 'owner/repo',
         pull: 123,
       });
@@ -348,11 +378,11 @@ describe('Custom Changelog Generator', () => {
     });
 
     it('should use changeset commit when no PR or commit in summary', async () => {
-      getInfo.mockResolvedValueOnce({
-        links: {
-          commit: '[`def5678`](https://github.com/owner/repo/commit/def5678)',
-          pull: null,
-          user: null,
+      getCommitInfo.mockResolvedValueOnce({
+        commit: {
+          sha: 'def5678',
+          url: 'https://github.com/owner/repo/commit/def5678',
+          markdownLink: '[`def5678`](https://github.com/owner/repo/commit/def5678)',
         },
       });
 
@@ -367,8 +397,8 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
-      expect(getInfo).toHaveBeenCalledTimes(1);
-      expect(getInfo).toHaveBeenCalledWith({
+      expect(getCommitInfo).toHaveBeenCalledTimes(1);
+      expect(getCommitInfo).toHaveBeenCalledWith({
         repo: 'owner/repo',
         commit: 'def5678',
       });
@@ -390,7 +420,7 @@ describe('Custom Changelog Generator', () => {
 
     // Test error handling
     it('should handle getInfo errors gracefully', async () => {
-      getInfo.mockRejectedValueOnce(new Error('Network error'));
+      getCommitInfo.mockRejectedValueOnce(new Error('Network error'));
       const changeset = {
         id: 'test',
         summary: 'Fix: Test',
@@ -405,11 +435,11 @@ describe('Custom Changelog Generator', () => {
 
     // Test different release types
     it('should handle major release type', async () => {
-      getInfo.mockResolvedValueOnce({
-        links: {
-          commit: '[`abc1234`](https://github.com/owner/repo/commit/abc1234)',
-          pull: null,
-          user: null,
+      getCommitInfo.mockResolvedValueOnce({
+        commit: {
+          sha: 'abc1234',
+          url: 'https://github.com/owner/repo/commit/abc1234',
+          markdownLink: '[`abc1234`](https://github.com/owner/repo/commit/abc1234)',
         },
       });
 
@@ -424,8 +454,8 @@ describe('Custom Changelog Generator', () => {
         repo: 'owner/repo',
       });
 
-      expect(getInfo).toHaveBeenCalledTimes(1);
-      expect(getInfo).toHaveBeenCalledWith({
+      expect(getCommitInfo).toHaveBeenCalledTimes(1);
+      expect(getCommitInfo).toHaveBeenCalledWith({
         repo: 'owner/repo',
         commit: 'abc1234',
       });

@@ -1,6 +1,6 @@
 // Adapted from https://github.com/changesets/changesets/blob/main/packages/changelog-github/src/index.ts
 import type { ChangelogFunctions } from '@changesets/types';
-import { getInfo, getInfoFromPullRequest } from '@changesets/get-github-info';
+import { getCommitInfo, getPullRequestInfo } from '@changesets/get-github-info';
 
 interface Options {
   repo: string;
@@ -8,7 +8,7 @@ interface Options {
 
 const changelogFunctions: ChangelogFunctions = {
   getDependencyReleaseLine: async (changesets, dependenciesUpdated, options) => {
-    const opts = options as Options;
+    const opts = options as unknown as Options;
     if (!opts.repo) {
       throw new Error(
         'Please provide a repo to this changelog generator like this:\n"changelog": ["@changesets/changelog-github", { "repo": "org/repo" }]',
@@ -20,12 +20,13 @@ const changelogFunctions: ChangelogFunctions = {
       await Promise.all(
         changesets.map(async (cs) => {
           if (cs.commit) {
-            const { links } = await getInfo({
+            const commitInfo = await getCommitInfo({
               repo: opts.repo,
               commit: cs.commit,
             });
-            return links.commit;
+            return commitInfo?.commit?.markdownLink ?? null;
           }
+          return null;
         }),
       )
     )
@@ -39,7 +40,7 @@ const changelogFunctions: ChangelogFunctions = {
     return [changesetLink, ...updatedDependenciesList].join('\n');
   },
   getReleaseLine: async (changeset, _type, options) => {
-    const opts = options as Options | undefined;
+    const opts = options as unknown as Options | undefined;
     if (!opts?.repo) {
       throw new Error(
         'Please provide a repo to this changelog generator like this:\n"changelog": ["@changesets/changelog-github", { "repo": "org/repo" }]',
@@ -68,29 +69,42 @@ const changelogFunctions: ChangelogFunctions = {
 
     const links = await (async () => {
       if (prFromSummary !== undefined) {
-        let { links } = await getInfoFromPullRequest({
+        const prInfo = await getPullRequestInfo({
           repo: opts.repo,
           pull: prFromSummary,
         });
+        if (!prInfo) {
+          return { commit: null, pull: null, user: null };
+        }
+        let commitLink: string | null = null;
+        if (prInfo.commit) {
+          commitLink = prInfo.commit.markdownLink ?? null;
+        }
         if (commitFromSummary) {
           const shortCommitId = commitFromSummary.slice(0, 7);
-          links = {
-            ...links,
-            commit: `[\`${shortCommitId}\`](https://github.com/${opts.repo}/commit/${commitFromSummary})`,
-          };
+          commitLink = `[\`${shortCommitId}\`](https://github.com/${opts.repo}/commit/${commitFromSummary})`;
         }
-        return links;
+        const pullLink = prInfo.pull?.markdownLink ?? null;
+        const userLink = prInfo.author?.markdownLink ?? null;
+        return { commit: commitLink, pull: pullLink, user: userLink };
       }
       const commitToFetchFrom = commitFromSummary || changeset.commit;
       if (commitToFetchFrom) {
         try {
-          const { links } = await getInfo({
+          const commitInfo = await getCommitInfo({
             repo: opts.repo,
             commit: commitToFetchFrom,
           });
-          return links;
+          if (!commitInfo) {
+            return { commit: null, pull: null, user: null };
+          }
+          return {
+            commit: commitInfo.commit?.markdownLink ?? null,
+            pull: commitInfo.pull?.markdownLink ?? null,
+            user: commitInfo.author?.markdownLink ?? null,
+          };
         } catch {
-          // Handle getInfo errors gracefully as expected by tests
+          // Handle getCommitInfo errors gracefully as expected by tests
           return {
             commit: null,
             pull: null,
