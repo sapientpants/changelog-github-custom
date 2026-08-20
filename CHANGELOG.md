@@ -1,5 +1,11 @@
 # changelog-github-custom
 
+## 1.2.9
+
+### Patch Changes
+
+- fix: add --sbom-format to pnpm sbom command
+
 ## 1.2.8
 
 ### Patch Changes
