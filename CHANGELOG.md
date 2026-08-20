@@ -1,5 +1,11 @@
 # changelog-github-custom
 
+## 1.2.8
+
+### Patch Changes
+
+- [#62](https://github.com/sapientpants/changelog-github-custom/pull/62) [`11d8103`](https://github.com/sapientpants/changelog-github-custom/commit/11d8103060528021b0ca1e98b0b0557b355c540e) - Removed @cyclonedx/cdxgen dependency, pinned vitest to 4.1.10, added electron-to-chromium override
+
 ## 1.2.7
 
 ### Patch Changes
