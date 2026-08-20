@@ -69,7 +69,7 @@
     "deps:check": "depcheck",
     "reset": "pnpm clean && pnpm install",
     "quick-check": "pnpm typecheck && pnpm lint && pnpm test",
-    "precommit": "pnpm audit --audit-level high && pnpm deps:check && pnpm typecheck && pnpm lint && pnpm lint:workflows && pnpm lint:markdown && pnpm lint:yaml && pnpm format && pnpm test",
+    "precommit": "pnpm install --frozen-lockfile && pnpm audit --audit-level high && pnpm deps:check && pnpm typecheck && pnpm lint && pnpm lint:workflows && pnpm lint:markdown && pnpm lint:yaml && pnpm format && pnpm test",
     "verify": "pnpm precommit",
     "setup": "./scripts/setup.sh",
     "lint-staged": "lint-staged",
