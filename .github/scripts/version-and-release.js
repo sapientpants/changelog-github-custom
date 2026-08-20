@@ -49,13 +49,27 @@ async function main() {
       const commits = exec(`git log ${commitRange} --pretty=format:"%s"`).split('\n');
 
       // Check if any commits require a release (feat, fix, perf, refactor)
-      const hasReleasableCommits = commits.some((c) =>
+      const releasableCommits = commits.filter((c) =>
         /^(feat|fix|perf|refactor)(\(.+\))?:/.test(c),
       );
 
-      if (!hasReleasableCommits) {
+      if (releasableCommits.length === 0) {
         // No commits that need a release
         log('⏭️ No releasable commits found, skipping release');
+        process.exit(0);
+      }
+
+      // Filter out commits already reflected in CHANGELOG.md
+      const changelogContent = fs.existsSync('CHANGELOG.md')
+        ? fs.readFileSync('CHANGELOG.md', 'utf-8')
+        : '';
+      const alreadyDocumented = releasableCommits.filter((c) => changelogContent.includes(c));
+
+      const newReleasableCommits = releasableCommits.filter((c) => !alreadyDocumented.includes(c));
+
+      if (newReleasableCommits.length === 0) {
+        // All releasable commits are already in the changelog (from a previous release)
+        log('⏭️ All releasable commits already documented, skipping release');
         process.exit(0);
       }
 
@@ -63,9 +77,7 @@ async function main() {
       // This enforces that all features/fixes are documented in changelog
       log('❌ Found releasable commits but no changeset');
       log('Commits that require a changeset:');
-      commits
-        .filter((c) => /^(feat|fix|perf|refactor)(\(.+\))?:/.test(c))
-        .forEach((c) => log(`  - ${c}`));
+      newReleasableCommits.forEach((c) => log(`  - ${c}`));
       log('\nPlease add a changeset by running: pnpm changeset');
       process.exit(1);
     }
