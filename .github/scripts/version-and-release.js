@@ -17,6 +17,23 @@ const exec = (cmd) => execSync(cmd, { encoding: 'utf-8', stdio: 'pipe' }).trim()
 // eslint-disable-next-line no-console
 const log = (msg) => console.log(msg);
 
+// Append key=value pairs to the GitHub Actions output file (no-op outside Actions)
+const appendOutputs = (outputs) => {
+  if (!process.env.GITHUB_OUTPUT) return;
+  for (const [key, value] of Object.entries(outputs)) {
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, `${key}=${value}\n`);
+  }
+};
+
+// Paths that contribute to the published package. A commit requires a release
+// only when it touches at least one of these; repo tooling (workflows,
+// scripts, configs, docs, lockfiles) never does, even with a feat:/fix: subject.
+const isPackagePath = (path) =>
+  /^(src|tests|dist)\//.test(path) || path === 'package.json' || /^tsconfig.*\.json$/.test(path);
+
+// A subject alone does not make a commit releasable
+const isReleasableSubject = (subject) => /^(feat|fix|perf|refactor)(\(.+\))?:/.test(subject);
+
 async function main() {
   try {
     // =============================================================================
@@ -44,32 +61,47 @@ async function main() {
         lastTag = '';
       }
 
-      // Get commits since last tag (or all commits if no tags)
+      // Get commits (subject + changed files) since last tag, or all commits if no tags.
+      // "@@@%s" is a delimiter that cannot appear in a commit subject, and
+      // --name-only lists each commit's paths directly below its subject.
       const commitRange = lastTag ? `${lastTag}..HEAD` : 'HEAD';
-      const commits = exec(`git log ${commitRange} --pretty=format:"%s"`).split('\n');
+      const commits = exec(`git log ${commitRange} --pretty=format:"@@@%s" --name-only`)
+        .split('@@@')
+        .map((entry) => {
+          const lines = entry
+            .split('\n')
+            .map((line) => line.trim())
+            .filter(Boolean);
+          return { subject: lines[0] ?? '', files: lines.slice(1) };
+        })
+        .filter((commit) => commit.subject);
 
-      // Check if any commits require a release (feat, fix, perf, refactor)
-      const releasableCommits = commits.filter((c) =>
-        /^(feat|fix|perf|refactor)(\(.+\))?:/.test(c),
+      // A commit is releasable only if its subject marks user-facing work AND
+      // it touches at least one path that ships in the published package.
+      const releasableCommits = commits.filter(
+        (commit) => isReleasableSubject(commit.subject) && commit.files.some(isPackagePath),
       );
 
       if (releasableCommits.length === 0) {
         // No commits that need a release
-        log('⏭️ No releasable commits found, skipping release');
+        log('⏭️ No releasable package commits found, skipping release');
+        appendOutputs({ changed: false });
         process.exit(0);
       }
 
-      // Filter out commits already reflected in CHANGELOG.md
+      // Filter out commits already reflected in CHANGELOG.md (from a previous
+      // release whose tag push failed); do not re-demand their changesets
       const changelogContent = fs.existsSync('CHANGELOG.md')
         ? fs.readFileSync('CHANGELOG.md', 'utf-8')
         : '';
-      const alreadyDocumented = releasableCommits.filter((c) => changelogContent.includes(c));
-
-      const newReleasableCommits = releasableCommits.filter((c) => !alreadyDocumented.includes(c));
+      const newReleasableCommits = releasableCommits.filter(
+        (commit) => !changelogContent.includes(commit.subject),
+      );
 
       if (newReleasableCommits.length === 0) {
-        // All releasable commits are already in the changelog (from a previous release)
+        // All package commits are already in the changelog (from a previous release)
         log('⏭️ All releasable commits already documented, skipping release');
+        appendOutputs({ changed: false });
         process.exit(0);
       }
 
@@ -77,7 +109,7 @@ async function main() {
       // This enforces that all features/fixes are documented in changelog
       log('❌ Found releasable commits but no changeset');
       log('Commits that require a changeset:');
-      newReleasableCommits.forEach((c) => log(`  - ${c}`));
+      newReleasableCommits.forEach((commit) => log(`  - ${commit.subject}`));
       log('\nPlease add a changeset by running: pnpm changeset');
       process.exit(1);
     }
@@ -103,6 +135,7 @@ async function main() {
     if (currentVersion === newVersion) {
       // No version bump needed (e.g., all changesets were --empty)
       log('⏭️ No version change');
+      appendOutputs({ changed: false, version: currentVersion });
       process.exit(0);
     }
 
@@ -111,14 +144,10 @@ async function main() {
     // =============================================================================
     // GITHUB ACTIONS OUTPUT
     // Set outputs for workflow to use in subsequent steps
+    // These values are used by main.yml to decide whether to create a release
     // =============================================================================
 
-    // Output for GitHub Actions
-    // These values are used by main.yml to decide whether to create a release
-    if (process.env.GITHUB_OUTPUT) {
-      fs.appendFileSync(process.env.GITHUB_OUTPUT, `changed=true\n`);
-      fs.appendFileSync(process.env.GITHUB_OUTPUT, `version=${newVersion}\n`);
-    }
+    appendOutputs({ changed: true, version: newVersion });
   } catch (error) {
     // Error handling with clear message
     // Common errors: permission issues, git conflicts, invalid changesets
