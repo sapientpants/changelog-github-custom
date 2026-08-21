@@ -29,7 +29,7 @@
 
 ## Git & Hooks
 
-- **1Password agent / SSH auth**: if a `git push`/`git fetch` fails with an SSH auth or "identity" error, **stop and wait** for Marc to re-approve the 1Password prompt — do NOT rewrite remotes, `git config`, or debug ssh/1Password. Original `origin` must stay an **ssh** remote (`git@github.com:...`), never https.
+- **SSH auth / agent**: if a `git push`/`git fetch` fails with an SSH auth or "identity" error, **stop and wait** for the user to handle authentication — do NOT rewrite remotes, `git config`, or debug ssh. Original `origin` must stay an **ssh** remote (`git@github.com:...`), never https.
 
 - **Husky**: pre-commit, commit-msg (commitlint conventional), pre-push
 - **Pre-push blocks `--no-verify`**: intentionally disallowed — all commits must pass hooks
