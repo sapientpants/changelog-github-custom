@@ -3,7 +3,7 @@ import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import * as jsonc from 'eslint-plugin-jsonc';
-import * as jsoncParserDefault from 'jsonc-eslint-parser';
+import * as jsoncParserModule from 'jsonc-eslint-parser';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 
@@ -11,10 +11,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const jsoncParser = {
   parse(code, options) {
-    const result = jsoncParserDefault.parseForESLint(code, options);
+    const result = jsoncParserModule.parseForESLint(code, options);
     return result.ast;
   },
-  parseForESLint: jsoncParserDefault.parseForESLint,
+  parseForESLint: jsoncParserModule.parseForESLint,
 };
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
