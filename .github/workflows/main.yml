@@ -191,10 +191,15 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: dist-${{ github.sha }}
+          # pnpm-workspace.yaml holds the overrides recorded in pnpm-lock.yaml;
+          # they must travel together, since jobs that check out the release tag
+          # (which may predate dependency updates on a retried release) install
+          # with --frozen-lockfile
           path: |
             dist/
             package.json
             pnpm-lock.yaml
+            pnpm-workspace.yaml
             build-manifest.json
           retention-days: 1 # Only needed for this workflow run
 
