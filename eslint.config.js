@@ -3,7 +3,7 @@ import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import * as jsonc from 'eslint-plugin-jsonc';
-import jsoncParserDefault from 'jsonc-eslint-parser';
+import * as jsoncParserDefault from 'jsonc-eslint-parser';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 
