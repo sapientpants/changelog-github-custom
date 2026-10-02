@@ -394,8 +394,10 @@ jobs:
             sbom.cdx.json
             dist-${{ needs.build.outputs.version }}-*.tar.gz
             dist-${{ needs.build.outputs.version }}-*.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          # Must be the `token` input: it defaults to github.token, which takes
+          # precedence over a GITHUB_TOKEN env var. Releases created with
+          # github.token do not trigger the Publish workflow.
+          token: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Set release output
         id: release
