@@ -28,6 +28,7 @@ const appendOutputs = (outputs) => {
 // Paths that contribute to the published package. A commit requires a release
 // only when it touches at least one of these; repo tooling (workflows,
 // scripts, configs, docs, lockfiles) never does, even with a feat:/fix: subject.
+// package.json is further narrowed by touchesPackage below.
 const isPackagePath = (path) =>
   /^(src|tests|dist)\//.test(path) || path === 'package.json' || /^tsconfig.*\.json$/.test(path);
 
@@ -56,13 +57,33 @@ const releaseExists = (tag) => {
 };
 
 // package.json without fields that do not affect what the package does
-// (dev tooling), so dependency maintenance does not block a release retry
+// (dev tooling), so dependency maintenance neither requires a release nor
+// blocks a release retry
 const shippedManifest = (json) => {
   const manifest = JSON.parse(json);
   delete manifest.devDependencies;
   delete manifest.scripts;
   return JSON.stringify(manifest);
 };
+
+// Whether a commit changed the shipped part of package.json
+const shippedManifestChanged = (hash) => {
+  try {
+    return (
+      shippedManifest(exec(`git show "${hash}^:package.json"`)) !==
+      shippedManifest(exec(`git show "${hash}:package.json"`))
+    );
+  } catch {
+    // Root commit or package.json added: treat as changed
+    return true;
+  }
+};
+
+// Whether a commit touches the published package; a package.json change
+// counts only if it goes beyond dev tooling
+const touchesPackage = ({ hash, files }) =>
+  files.some((file) => file !== 'package.json' && isPackagePath(file)) ||
+  (files.includes('package.json') && shippedManifestChanged(hash));
 
 // Detect a version that was tagged but never released: the release job failed
 // after the version commit and tag were pushed. Its changesets are already
@@ -126,25 +147,25 @@ async function main() {
         lastTag = '';
       }
 
-      // Get commits (subject + changed files) since last tag, or all commits if no tags.
-      // "@@@%s" is a delimiter that cannot appear in a commit subject, and
+      // Get commits (hash, subject + changed files) since last tag, or all commits if no tags.
+      // "@@@%H %s" is a delimiter that cannot appear in a commit subject, and
       // --name-only lists each commit's paths directly below its subject.
       const commitRange = lastTag ? `${lastTag}..HEAD` : 'HEAD';
-      const commits = exec(`git log ${commitRange} --pretty=format:"@@@%s" --name-only`)
+      const commits = exec(`git log ${commitRange} --pretty=format:"@@@%H %s" --name-only`)
         .split('@@@')
         .map((entry) => {
-          const lines = entry
+          const [header = '', ...files] = entry
             .split('\n')
             .map((line) => line.trim())
             .filter(Boolean);
-          return { subject: lines[0] ?? '', files: lines.slice(1) };
+          return { hash: header.slice(0, 40), subject: header.slice(41), files };
         })
         .filter((commit) => commit.subject);
 
       // A commit is releasable only if its subject marks user-facing work AND
       // it touches at least one path that ships in the published package.
       const releasableCommits = commits.filter(
-        (commit) => isReleasableSubject(commit.subject) && commit.files.some(isPackagePath),
+        (commit) => isReleasableSubject(commit.subject) && touchesPackage(commit),
       );
 
       if (releasableCommits.length === 0) {
