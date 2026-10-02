@@ -151,39 +151,67 @@ while [ $RETRY_COUNT -lt $MAX_RETRIES ] && [ -z "$MAIN_RUN" ]; do
   fi
 done
 
-if [ -z "$MAIN_RUN" ]; then
-  echo "❌ No successful Main workflow run found for parent commit $PARENT_SHA after $MAX_RETRIES attempts"
-  echo "Available runs:"
-  echo "$RUNS_BODY" | jq -r '.workflow_runs[] | "\(.name): \(.id) (\(.status))"'
-  exit 1
-fi
+if [ -n "$MAIN_RUN" ]; then
+  RUN_ID=$(echo "$MAIN_RUN" | jq -r '.id')
+  echo "✅ Found Main workflow run: $RUN_ID"
 
-RUN_ID=$(echo "$MAIN_RUN" | jq -r '.id')
-echo "✅ Found Main workflow run: $RUN_ID"
+  # Get artifacts from the workflow run
+  ARTIFACTS_API_URL="https://api.github.com/repos/$REPO/actions/runs/$RUN_ID/artifacts"
+  echo "🔍 Fetching artifacts from run $RUN_ID"
 
-# Get artifacts from the workflow run
-ARTIFACTS_API_URL="https://api.github.com/repos/$REPO/actions/runs/$RUN_ID/artifacts"
-echo "🔍 Fetching artifacts from run $RUN_ID"
+  ARTIFACTS_RESPONSE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" -w "\n%{http_code}" $ARTIFACTS_API_URL)
+  ARTIFACTS_BODY=$(echo "$ARTIFACTS_RESPONSE" | head -n -1)
+  ARTIFACTS_STATUS=$(echo "$ARTIFACTS_RESPONSE" | tail -n 1)
 
-ARTIFACTS_RESPONSE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" -w "\n%{http_code}" $ARTIFACTS_API_URL)
-ARTIFACTS_BODY=$(echo "$ARTIFACTS_RESPONSE" | head -n -1)
-ARTIFACTS_STATUS=$(echo "$ARTIFACTS_RESPONSE" | tail -n 1)
+  if [ "$ARTIFACTS_STATUS" != "200" ]; then
+    echo "❌ Failed to fetch artifacts with status $ARTIFACTS_STATUS"
+    echo "Response: $ARTIFACTS_BODY"
+    exit 1
+  fi
 
-if [ "$ARTIFACTS_STATUS" != "200" ]; then
-  echo "❌ Failed to fetch artifacts with status $ARTIFACTS_STATUS"
-  echo "Response: $ARTIFACTS_BODY"
-  exit 1
-fi
+  # Find the artifact with the specified prefix (using full parent SHA to match artifact naming)
+  ARTIFACT_NAME="$PREFIX-$VERSION-${PARENT_SHA}"
+  ARTIFACT=$(echo "$ARTIFACTS_BODY" | jq -r --arg name "$ARTIFACT_NAME" '.artifacts[] | select(.name == $name)')
 
-# Find the artifact with the specified prefix (using full parent SHA to match artifact naming)
-ARTIFACT_NAME="$PREFIX-$VERSION-${PARENT_SHA}"
-ARTIFACT=$(echo "$ARTIFACTS_BODY" | jq -r --arg name "$ARTIFACT_NAME" '.artifacts[] | select(.name == $name)')
+  if [ -z "$ARTIFACT" ]; then
+    echo "❌ Artifact $ARTIFACT_NAME not found in workflow run $RUN_ID"
+    echo "Available artifacts:"
+    echo "$ARTIFACTS_BODY" | jq -r '.artifacts[].name'
+    exit 1
+  fi
 
-if [ -z "$ARTIFACT" ]; then
-  echo "❌ Artifact $ARTIFACT_NAME not found in workflow run $RUN_ID"
-  echo "Available artifacts:"
-  echo "$ARTIFACTS_BODY" | jq -r '.artifacts[].name'
-  exit 1
+  BUILD_SHA="$PARENT_SHA"
+else
+  # Fallback: the original release run failed after pushing the tag, and a later
+  # Main run retried the release. Its artifact is named after that run's commit,
+  # so search the repository's recent artifacts by version prefix instead.
+  echo "⚠️  No successful Main workflow run found for parent commit $PARENT_SHA after $MAX_RETRIES attempts"
+  echo "🔍 Searching recent artifacts for $PREFIX-$VERSION-*"
+
+  REPO_ARTIFACTS_URL="https://api.github.com/repos/$REPO/actions/artifacts?per_page=100"
+  ARTIFACTS_RESPONSE=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" -w "\n%{http_code}" $REPO_ARTIFACTS_URL)
+  ARTIFACTS_BODY=$(echo "$ARTIFACTS_RESPONSE" | head -n -1)
+  ARTIFACTS_STATUS=$(echo "$ARTIFACTS_RESPONSE" | tail -n 1)
+
+  if [ "$ARTIFACTS_STATUS" != "200" ]; then
+    echo "❌ Failed to fetch repository artifacts with status $ARTIFACTS_STATUS"
+    echo "Response: $ARTIFACTS_BODY"
+    exit 1
+  fi
+
+  # Most recent non-expired artifact for this version
+  ARTIFACT=$(echo "$ARTIFACTS_BODY" | jq -c --arg prefix "$PREFIX-$VERSION-" \
+    '[.artifacts[] | select((.name | startswith($prefix)) and (.expired | not))] | sort_by(.created_at) | last // empty')
+
+  if [ -z "$ARTIFACT" ]; then
+    echo "❌ No artifact matching $PREFIX-$VERSION-* found"
+    exit 1
+  fi
+
+  ARTIFACT_NAME=$(echo "$ARTIFACT" | jq -r '.name')
+  RUN_ID=$(echo "$ARTIFACT" | jq -r '.workflow_run.id')
+  BUILD_SHA=$(echo "$ARTIFACT" | jq -r '.workflow_run.head_sha')
+  echo "✅ Found artifact from Main workflow run: $RUN_ID"
 fi
 
 ARTIFACT_ID=$(echo "$ARTIFACT" | jq -r '.id')
@@ -196,7 +224,7 @@ echo "✅ Found artifact: $ARTIFACT_NAME (ID: $ARTIFACT_ID, Size: $ARTIFACT_SIZE
   echo "artifact_name=$ARTIFACT_NAME"
   echo "artifact_id=$ARTIFACT_ID"
   echo "run_id=$RUN_ID"
-  echo "commit_sha=$PARENT_SHA"  # Use parent SHA since that's what built the artifacts
+  echo "commit_sha=$BUILD_SHA"  # Commit that built the artifacts
 } >> "$OUTPUT_FILE"
 
 echo "✅ Artifact information written to $OUTPUT_FILE"

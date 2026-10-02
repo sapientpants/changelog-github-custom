@@ -34,6 +34,42 @@ const isPackagePath = (path) =>
 // A subject alone does not make a commit releasable
 const isReleasableSubject = (subject) => /^(feat|fix|perf|refactor)(\(.+\))?:/.test(subject);
 
+// Returns true if the command exits 0, false otherwise
+const succeeds = (cmd) => {
+  try {
+    exec(cmd);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+// Whether a GitHub release exists for the tag (requires the gh CLI)
+const releaseExists = (tag) => {
+  try {
+    exec(`gh release view "${tag}" --json tagName`);
+    return true;
+  } catch (error) {
+    if (/release not found/i.test(String(error.stderr))) return false;
+    throw error;
+  }
+};
+
+// Detect a version that was tagged but never released: the release job failed
+// after the version commit and tag were pushed. Its changesets are already
+// consumed, so without this the release (and npm publish) is never retried.
+// Only safe when the shipped package is unchanged since the tag.
+const findUnreleasedVersion = (version) => {
+  const tag = `v${version}`;
+  if (!succeeds(`git rev-parse -q --verify "refs/tags/${tag}"`)) return null;
+  if (releaseExists(tag)) return null;
+  if (!succeeds(`git diff --quiet "${tag}" HEAD -- src package.json "tsconfig*.json"`)) {
+    log(`⚠️ ${tag} was tagged but never released, and the package changed since; not retrying it`);
+    return null;
+  }
+  return version;
+};
+
 async function main() {
   try {
     // =============================================================================
@@ -47,6 +83,19 @@ async function main() {
       fs.readdirSync('.changeset').some((f) => f.endsWith('.md') && f !== 'README.md');
 
     if (!hasChangesets) {
+      // =============================================================================
+      // RETRY UNRELEASED VERSION
+      // Re-run the release for a version that was tagged but never released
+      // =============================================================================
+
+      const { version: currentVersion } = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
+      const unreleasedVersion = findUnreleasedVersion(currentVersion);
+      if (unreleasedVersion) {
+        log(`♻️ v${unreleasedVersion} was tagged but never released, retrying its release`);
+        appendOutputs({ changed: true, version: unreleasedVersion, retry: true });
+        process.exit(0);
+      }
+
       // =============================================================================
       // VALIDATE COMMITS MATCH CHANGESETS
       // Ensure feat/fix commits have corresponding changesets
