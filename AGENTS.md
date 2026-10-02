@@ -39,6 +39,5 @@
 ## Constraints
 
 - No `.env` files — secrets managed via GitHub Actions repository secrets (`RELEASE_TOKEN`, `NPM_TOKEN`, etc.)
-- `.opencode/` contains opencode configuration and commands
 - `pnpm.overrides` pins several transitive deps (tar, undici, uuid, validator, vite, yaml) — don't upgrade without checking overrides
 - ESLint uses type-checked rules on `src/**/*.ts` and `tests/**/*.ts` — `tsc` must pass before lint passes
