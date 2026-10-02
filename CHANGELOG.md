@@ -1,5 +1,11 @@
 # changelog-github-custom
 
+## 1.2.9
+
+### Patch Changes
+
+- [#74](https://github.com/sapientpants/changelog-github-custom/pull/74) [`51da22a`](https://github.com/sapientpants/changelog-github-custom/commit/51da22a453d0d6d8c4b79f5321aa7bdfa04c9d9c) - Update dependencies, including @changesets/get-github-info to 1.0.1
+
 ## 1.2.8
 
 ### Patch Changes
