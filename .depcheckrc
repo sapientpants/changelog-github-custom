@@ -4,7 +4,6 @@
     "@commitlint/*",
     "@typescript-eslint/*",
     "@vitest/coverage-v8",
-    "eslint-*",
     "globals",
     "husky",
     "jsonc-eslint-parser",
