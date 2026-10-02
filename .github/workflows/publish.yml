@@ -72,6 +72,15 @@ jobs:
           # This ensures we publish exactly what was released
           ref: ${{ steps.version.outputs.tag }}
 
+      - name: Checkout CI scripts
+        # Run helper scripts from the workflow's own commit, not the release
+        # tag, so script fixes also apply when re-publishing an older tag
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: .ci-scripts
+          sparse-checkout: .github/scripts
+
       - name: Setup Node.js
         # Node.js is required for npm publish command
         uses: actions/setup-node@v4
@@ -86,8 +95,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          chmod +x .github/scripts/determine-artifact.sh
-          .github/scripts/determine-artifact.sh \
+          chmod +x .ci-scripts/.github/scripts/determine-artifact.sh
+          .ci-scripts/.github/scripts/determine-artifact.sh \
             --tag "${{ steps.version.outputs.tag }}" \
             --repo "${{ github.repository }}" \
             --version "${{ steps.version.outputs.version }}" \
@@ -174,6 +183,15 @@ jobs:
         with:
           ref: ${{ steps.version.outputs.tag }}
 
+      - name: Checkout CI scripts
+        # Run helper scripts from the workflow's own commit, not the release
+        # tag, so script fixes also apply when re-publishing an older tag
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: .ci-scripts
+          sparse-checkout: .github/scripts
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -187,8 +205,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          chmod +x .github/scripts/determine-artifact.sh
-          .github/scripts/determine-artifact.sh \
+          chmod +x .ci-scripts/.github/scripts/determine-artifact.sh
+          .ci-scripts/.github/scripts/determine-artifact.sh \
             --tag "${{ steps.version.outputs.tag }}" \
             --repo "${{ github.repository }}" \
             --version "${{ steps.version.outputs.version }}" \
