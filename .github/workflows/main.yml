@@ -113,8 +113,21 @@ jobs:
           # Stage version-related changes
           git add package.json CHANGELOG.md .changeset
 
+          # When retrying a tagged-but-unreleased version, the version commit
+          # already exists; only consumed empty changesets may need committing
+          if git diff --cached --quiet; then
+            echo "⏭️ No version changes to commit"
+            exit 0
+          fi
+
+          if [ "${{ steps.version.outputs.retry }}" = "true" ]; then
+            MESSAGE="chore(release): consume changesets for v${{ steps.version.outputs.version }} [skip actions]"
+          else
+            MESSAGE="chore(release): v${{ steps.version.outputs.version }} [skip actions]"
+          fi
+
           # Commit with [skip actions] to prevent workflow recursion
-          git commit -m "chore(release): v${{ steps.version.outputs.version }} [skip actions]"
+          git commit -m "$MESSAGE"
 
           # Push changes to origin
           git push origin main
@@ -130,15 +143,20 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.version }}"
 
-          # Configure git
-          git config --local user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-          git config --local user.name "${{ github.actor }}"
+          if [ "${{ steps.version.outputs.retry }}" = "true" ]; then
+            # Tag already exists from a previous release attempt that failed
+            echo "♻️ Reusing existing tag v${VERSION}"
+          else
+            # Configure git
+            git config --local user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+            git config --local user.name "${{ github.actor }}"
 
-          # Create annotated tag
-          git tag -a "v${VERSION}" -m "Release v${VERSION}"
+            # Create annotated tag
+            git tag -a "v${VERSION}" -m "Release v${VERSION}"
 
-          # Push tag to origin
-          git push origin "v${VERSION}"
+            # Push tag to origin
+            git push origin "v${VERSION}"
+          fi
 
           # Get the tag SHA for artifact naming
           TAG_SHA=$(git rev-list -n 1 "v${VERSION}")

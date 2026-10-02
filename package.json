@@ -112,7 +112,7 @@
     "@types/node": "^26.2.0",
     "@typescript-eslint/eslint-plugin": "^8.67.0",
     "@typescript-eslint/parser": "^8.67.0",
-    "@vitest/coverage-v8": "4.1.10",
+    "@vitest/coverage-v8": "4.1.11",
     "depcheck": "^1.4.7",
     "eslint": "^10.8.1",
     "eslint-config-prettier": "^10.1.8",
@@ -124,12 +124,12 @@
     "husky": "^9.1.7",
     "jsonc-eslint-parser": "2.4.2",
     "lint-staged": "^17.3.0",
-    "markdownlint-cli2": "^0.23.2",
+    "markdownlint-cli2": "^0.23.3",
     "prettier": "^3.9.6",
     "rimraf": "^6.1.3",
     "typescript": "^6.0.3",
     "vite": "8.2.1",
-    "vitest": "4.1.10",
+    "vitest": "4.1.11",
     "yaml-lint": "1.7.0"
   }
 }

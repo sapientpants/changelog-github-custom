@@ -34,6 +34,64 @@ const isPackagePath = (path) =>
 // A subject alone does not make a commit releasable
 const isReleasableSubject = (subject) => /^(feat|fix|perf|refactor)(\(.+\))?:/.test(subject);
 
+// Returns true if the command exits 0, false otherwise
+const succeeds = (cmd) => {
+  try {
+    exec(cmd);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+// Whether a GitHub release exists for the tag (requires the gh CLI)
+const releaseExists = (tag) => {
+  try {
+    exec(`gh release view "${tag}" --json tagName`);
+    return true;
+  } catch (error) {
+    if (/release not found/i.test(String(error.stderr))) return false;
+    throw error;
+  }
+};
+
+// package.json without fields that do not affect what the package does
+// (dev tooling), so dependency maintenance does not block a release retry
+const shippedManifest = (json) => {
+  const manifest = JSON.parse(json);
+  delete manifest.devDependencies;
+  delete manifest.scripts;
+  return JSON.stringify(manifest);
+};
+
+// Detect a version that was tagged but never released: the release job failed
+// after the version commit and tag were pushed. Its changesets are already
+// consumed, so without this the release (and npm publish) is never retried.
+// Only safe when the shipped package is unchanged since the tag.
+const findUnreleasedVersion = (version) => {
+  const tag = `v${version}`;
+  if (!succeeds(`git rev-parse -q --verify "refs/tags/${tag}"`)) return null;
+  if (releaseExists(tag)) return null;
+  const sourceUnchanged = succeeds(`git diff --quiet "${tag}" -- src "tsconfig*.json"`);
+  const manifestUnchanged =
+    shippedManifest(exec(`git show "${tag}:package.json"`)) ===
+    shippedManifest(fs.readFileSync('package.json', 'utf-8'));
+  if (!sourceUnchanged || !manifestUnchanged) {
+    log(`⚠️ ${tag} was tagged but never released, and the package changed since; not retrying it`);
+    return null;
+  }
+  return version;
+};
+
+// Output a release of the current version (without bumping or re-tagging it)
+// and exit, if it was tagged but never released
+const retryIfUnreleased = (version) => {
+  if (!findUnreleasedVersion(version)) return;
+  log(`♻️ v${version} was tagged but never released, retrying its release`);
+  appendOutputs({ changed: true, version, retry: true });
+  process.exit(0);
+};
+
 async function main() {
   try {
     // =============================================================================
@@ -47,6 +105,13 @@ async function main() {
       fs.readdirSync('.changeset').some((f) => f.endsWith('.md') && f !== 'README.md');
 
     if (!hasChangesets) {
+      // =============================================================================
+      // RETRY UNRELEASED VERSION
+      // Re-run the release for a version that was tagged but never released
+      // =============================================================================
+
+      retryIfUnreleased(JSON.parse(fs.readFileSync('package.json', 'utf-8')).version);
+
       // =============================================================================
       // VALIDATE COMMITS MATCH CHANGESETS
       // Ensure feat/fix commits have corresponding changesets
@@ -133,7 +198,9 @@ async function main() {
     const newVersion = updatedPkg.version;
 
     if (currentVersion === newVersion) {
-      // No version bump needed (e.g., all changesets were --empty)
+      // No version bump needed (e.g., all changesets were --empty), but the
+      // current version may still be awaiting a release
+      retryIfUnreleased(currentVersion);
       log('⏭️ No version change');
       appendOutputs({ changed: false, version: currentVersion });
       process.exit(0);
