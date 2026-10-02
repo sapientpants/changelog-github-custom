@@ -55,6 +55,15 @@ const releaseExists = (tag) => {
   }
 };
 
+// package.json without fields that do not affect what the package does
+// (dev tooling), so dependency maintenance does not block a release retry
+const shippedManifest = (json) => {
+  const manifest = JSON.parse(json);
+  delete manifest.devDependencies;
+  delete manifest.scripts;
+  return JSON.stringify(manifest);
+};
+
 // Detect a version that was tagged but never released: the release job failed
 // after the version commit and tag were pushed. Its changesets are already
 // consumed, so without this the release (and npm publish) is never retried.
@@ -63,11 +72,24 @@ const findUnreleasedVersion = (version) => {
   const tag = `v${version}`;
   if (!succeeds(`git rev-parse -q --verify "refs/tags/${tag}"`)) return null;
   if (releaseExists(tag)) return null;
-  if (!succeeds(`git diff --quiet "${tag}" HEAD -- src package.json "tsconfig*.json"`)) {
+  const sourceUnchanged = succeeds(`git diff --quiet "${tag}" -- src "tsconfig*.json"`);
+  const manifestUnchanged =
+    shippedManifest(exec(`git show "${tag}:package.json"`)) ===
+    shippedManifest(fs.readFileSync('package.json', 'utf-8'));
+  if (!sourceUnchanged || !manifestUnchanged) {
     log(`⚠️ ${tag} was tagged but never released, and the package changed since; not retrying it`);
     return null;
   }
   return version;
+};
+
+// Output a release of the current version (without bumping or re-tagging it)
+// and exit, if it was tagged but never released
+const retryIfUnreleased = (version) => {
+  if (!findUnreleasedVersion(version)) return;
+  log(`♻️ v${version} was tagged but never released, retrying its release`);
+  appendOutputs({ changed: true, version, retry: true });
+  process.exit(0);
 };
 
 async function main() {
@@ -88,13 +110,7 @@ async function main() {
       // Re-run the release for a version that was tagged but never released
       // =============================================================================
 
-      const { version: currentVersion } = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
-      const unreleasedVersion = findUnreleasedVersion(currentVersion);
-      if (unreleasedVersion) {
-        log(`♻️ v${unreleasedVersion} was tagged but never released, retrying its release`);
-        appendOutputs({ changed: true, version: unreleasedVersion, retry: true });
-        process.exit(0);
-      }
+      retryIfUnreleased(JSON.parse(fs.readFileSync('package.json', 'utf-8')).version);
 
       // =============================================================================
       // VALIDATE COMMITS MATCH CHANGESETS
@@ -182,7 +198,9 @@ async function main() {
     const newVersion = updatedPkg.version;
 
     if (currentVersion === newVersion) {
-      // No version bump needed (e.g., all changesets were --empty)
+      // No version bump needed (e.g., all changesets were --empty), but the
+      // current version may still be awaiting a release
+      retryIfUnreleased(currentVersion);
       log('⏭️ No version change');
       appendOutputs({ changed: false, version: currentVersion });
       process.exit(0);

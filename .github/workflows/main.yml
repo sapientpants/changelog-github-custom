@@ -104,8 +104,7 @@ jobs:
           node .github/scripts/version-and-release.js
 
       - name: Commit version changes
-        # Skipped when retrying a tagged-but-unreleased version (already committed)
-        if: steps.version.outputs.changed == 'true' && steps.version.outputs.retry != 'true'
+        if: steps.version.outputs.changed == 'true'
         run: |
           # Configure git with GitHub Actions bot identity
           git config --local user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
@@ -114,8 +113,21 @@ jobs:
           # Stage version-related changes
           git add package.json CHANGELOG.md .changeset
 
+          # When retrying a tagged-but-unreleased version, the version commit
+          # already exists; only consumed empty changesets may need committing
+          if git diff --cached --quiet; then
+            echo "⏭️ No version changes to commit"
+            exit 0
+          fi
+
+          if [ "${{ steps.version.outputs.retry }}" = "true" ]; then
+            MESSAGE="chore(release): consume changesets for v${{ steps.version.outputs.version }} [skip actions]"
+          else
+            MESSAGE="chore(release): v${{ steps.version.outputs.version }} [skip actions]"
+          fi
+
           # Commit with [skip actions] to prevent workflow recursion
-          git commit -m "chore(release): v${{ steps.version.outputs.version }} [skip actions]"
+          git commit -m "$MESSAGE"
 
           # Push changes to origin
           git push origin main
