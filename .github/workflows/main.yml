@@ -58,6 +58,9 @@ jobs:
   # =============================================================================
 
   build:
+    # Gate on validation and security so a failing test suite or scan never
+    # produces a permanent version commit or release tag on main
+    needs: [validate, security]
     runs-on: ubuntu-latest
     outputs:
       artifact-name: dist-${{ github.sha }}
@@ -300,11 +303,16 @@ jobs:
 
   create-release:
     name: Create GitHub Release
-    needs: [build, docker, npm]
-    # Run if build succeeded AND docker/npm either succeeded or were skipped
+    needs: [validate, security, build, docker, npm]
+    # Run only if validate, security, and build all succeeded AND docker/npm
+    # either succeeded or were skipped. The explicit result checks are required
+    # because using !cancelled() disables the implicit success() gate on needs.
     if: |
       needs.build.outputs.changed == 'true' &&
       !cancelled() &&
+      needs.validate.result == 'success' &&
+      needs.security.result == 'success' &&
+      needs.build.result == 'success' &&
       (needs.docker.result == 'success' || needs.docker.result == 'skipped') &&
       (needs.npm.result == 'success' || needs.npm.result == 'skipped')
     runs-on: ubuntu-latest
