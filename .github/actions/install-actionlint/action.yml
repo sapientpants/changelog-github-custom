@@ -1,0 +1,44 @@
+name: Install actionlint
+description: >-
+  Download a pinned actionlint release, verify its SHA-256, and add it to PATH.
+  Used by every job that runs `pnpm lint:workflows`, including the release
+  build job whose version commit triggers the husky pre-commit hook.
+
+# UPDATE: Bump version and sha256 together. The checksum is the linux_amd64
+# entry in actionlint_<version>_checksums.txt on the release:
+# https://github.com/rhysd/actionlint/releases
+inputs:
+  version:
+    description: actionlint release version (without the leading v)
+    required: false
+    default: 1.7.12
+  sha256:
+    description: SHA-256 of actionlint_<version>_linux_amd64.tar.gz
+    required: false
+    default: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+
+runs:
+  using: composite
+  steps:
+    - name: Download and verify actionlint
+      # FAILS IF: Download fails or the archive does not match the expected checksum
+      shell: bash
+      env:
+        ACTIONLINT_VERSION: ${{ inputs.version }}
+        ACTIONLINT_SHA256: ${{ inputs.sha256 }}
+      run: |
+        set -euo pipefail
+        archive="actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+        url="https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/${archive}"
+        tmp="$(mktemp -d)"
+        bin_dir="${RUNNER_TEMP}/actionlint-bin"
+
+        echo "Downloading ${url}"
+        curl -fsSL --retry 3 --retry-delay 2 -o "${tmp}/${archive}" "${url}"
+        echo "${ACTIONLINT_SHA256}  ${tmp}/${archive}" | sha256sum --check --strict
+
+        mkdir -p "${bin_dir}"
+        tar -xzf "${tmp}/${archive}" -C "${bin_dir}" actionlint
+        chmod 0755 "${bin_dir}/actionlint"
+        echo "${bin_dir}" >> "${GITHUB_PATH}"
+        "${bin_dir}/actionlint" --version

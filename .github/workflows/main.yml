@@ -90,6 +90,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install actionlint
+        # The release version commit below runs the husky pre-commit hook, which
+        # runs `pnpm lint:workflows`; scripts/actionlint.sh fails in CI if missing
+        uses: ./.github/actions/install-actionlint
+
       - name: Build TypeScript for changeset
         # Build BEFORE versioning so custom changelog generator is available
         run: |
