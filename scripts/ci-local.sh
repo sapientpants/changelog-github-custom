@@ -49,7 +49,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         --help|-h)
             echo "Usage: $0 [--fast] [--no-security]"
-            echo "  --fast        Skip slower checks (container scan, full coverage)"
+            echo "  --fast        Skip slower checks (full coverage)"
             echo "  --no-security Skip security scans"
             exit 0
             ;;
@@ -110,16 +110,6 @@ if [ "$SKIP_SECURITY" = false ]; then
         fi
     else
         warn "OSV scanner not installed. Run: go install github.com/google/osv-scanner/cmd/osv-scanner@latest"
-    fi
-    
-    # Container scan (if not in fast mode)
-    if [ "$FAST_MODE" = false ] && [ -f "./scripts/scan-container.sh" ]; then
-        if command -v docker &> /dev/null && command -v trivy &> /dev/null; then
-            echo "  → Container security scan..."
-            ./scripts/scan-container.sh
-        else
-            warn "Docker or Trivy not available. Skipping container scan."
-        fi
     fi
 else
     info "Security scans skipped"

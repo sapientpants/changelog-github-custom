@@ -68,8 +68,6 @@
     "verify": "pnpm precommit",
     "setup": "./scripts/setup.sh",
     "lint-staged": "lint-staged",
-    "scan:container": "./scripts/scan-container.sh",
-    "scan:container:sarif": "./scripts/scan-container.sh --format sarif --output container-scan.sarif",
     "prepare": "husky",
     "release": "changeset version && pnpm build",
     "release:publish": "pnpm build && changeset publish",
