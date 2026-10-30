@@ -9,9 +9,7 @@ self-hosted-runner:
 # Configuration variables used in workflows
 # This helps actionlint validate variable references
 config-variables:
-  - ENABLE_DOCKER_RELEASE
   - ENABLE_NPM_RELEASE
-  - ENABLE_GITHUB_PACKAGES
 
 # Ignore specific shellcheck warnings
 # SC2086: Double quote to prevent globbing and word splitting

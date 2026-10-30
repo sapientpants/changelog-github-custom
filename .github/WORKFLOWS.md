@@ -14,7 +14,6 @@ graph LR
     VERSION --> RELEASE[Create Release]
     RELEASE --> PUBLISH[Publish Workflow]
     PUBLISH --> NPM[NPM Package]
-    PUBLISH --> DOCKER[Docker Image]
 ```
 
 ## Important Setup Requirements
@@ -75,7 +74,7 @@ The Main workflow creates GitHub releases that should trigger the Publish workfl
 
 ### 3. Publish Workflow (`publish.yml`)
 
-**Purpose**: Publishes packages to registries after a release.
+**Purpose**: Publishes the package to npm after a release.
 
 **Triggers**:
 
@@ -84,25 +83,22 @@ The Main workflow creates GitHub releases that should trigger the Publish workfl
 
 **Jobs**:
 
-- **npm**: Publishes to NPM (requires `ENABLE_NPM_RELEASE` variable)
-- **docker**: Builds and publishes Docker images (requires `ENABLE_DOCKER_RELEASE` variable)
+- **fetch-npm-package**: Downloads the tarball built and attested by the Main workflow
+- **npm**: Publishes that tarball to NPM with provenance (requires `ENABLE_NPM_RELEASE` variable)
 
 ## Configuration
 
 ### Required Secrets
 
-| Secret               | Purpose                                       | Required For    |
-| -------------------- | --------------------------------------------- | --------------- |
-| `RELEASE_TOKEN`      | PAT to trigger publish workflow from releases | Auto-publish    |
-| `DOCKERHUB_USERNAME` | Docker Hub username                           | Docker Hub push |
-| `DOCKERHUB_TOKEN`    | Docker Hub access token                       | Docker Hub push |
+| Secret          | Purpose                                       | Required For |
+| --------------- | --------------------------------------------- | ------------ |
+| `RELEASE_TOKEN` | PAT to trigger publish workflow from releases | Auto-publish |
 
 ### Repository Variables
 
-| Variable                | Purpose                    | Default |
-| ----------------------- | -------------------------- | ------- |
-| `ENABLE_NPM_RELEASE`    | Enable NPM publishing      | `false` |
-| `ENABLE_DOCKER_RELEASE` | Enable Docker distribution | `false` |
+| Variable             | Purpose               | Default |
+| -------------------- | --------------------- | ------- |
+| `ENABLE_NPM_RELEASE` | Enable NPM publishing | `false` |
 
 ## Setup Instructions
 
@@ -115,10 +111,10 @@ Create a fine-grained PAT with:
 
 Add as `RELEASE_TOKEN` secret.
 
-### 2. Enable Docker Distribution (Optional)
+### 2. Enable NPM Publishing
 
-1. Set `ENABLE_DOCKER_RELEASE=true` variable
-2. Add Docker Hub credentials if using Docker Hub
+Set the `ENABLE_NPM_RELEASE=true` repository variable. Publishing authenticates
+with GitHub OIDC (trusted publishing), so no `NPM_TOKEN` secret is needed.
 
 ## How It Works
 
@@ -131,9 +127,7 @@ Add as `RELEASE_TOKEN` secret.
    - Builds artifacts
    - Creates GitHub release
 5. **Publish workflow triggers** (if `RELEASE_TOKEN` configured):
-   - Publishes to NPM
-   - Builds Docker images
-   - Deploys to configured targets
+   - Publishes the attested tarball to NPM
 
 ## Troubleshooting
 

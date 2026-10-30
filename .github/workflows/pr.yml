@@ -23,12 +23,10 @@ concurrency:
 # contents: read - Read code for analysis
 # security-events: write - Upload security findings
 # actions: read - Access workflow artifacts
-# packages: write - Required by reusable-docker.yml (not used in PR builds)
 permissions:
   contents: read
   security-events: write
   actions: read
-  packages: write
 
 jobs:
   # =============================================================================
@@ -53,22 +51,6 @@ jobs:
       run-osv-scan: false
 
   # =============================================================================
-  # DOCKER CONTAINER VALIDATION
-  # Build and scan Docker image for vulnerabilities
-  # =============================================================================
-
-  # Docker: Build and security scan container image
-  # Only runs when ENABLE_DOCKER_RELEASE is configured
-  # Scans for: CVEs, misconfigurations, secrets in image layers
-  docker:
-    if: vars.ENABLE_DOCKER_RELEASE == 'true'
-    uses: ./.github/workflows/reusable-docker.yml
-    with:
-      platforms: 'linux/amd64' # Single platform for faster PR validation
-      save-artifact: false # Don't save artifact for PRs
-      image-name: 'changelog-github-custom-pr'
-
-  # =============================================================================
   # FINAL STATUS CHECK
   # Single job to verify all parallel checks succeeded
   # =============================================================================
@@ -76,7 +58,7 @@ jobs:
   # Final status check - ensures all jobs passed
   # Required for branch protection rules
   pr-status:
-    needs: [validate, security, docker]
+    needs: [validate, security]
     if: always() # Run even if previous jobs failed
     runs-on: ubuntu-latest
     steps:
@@ -87,32 +69,13 @@ jobs:
         # Common failures:
         #   - validate: Tests fail, coverage below 80%, lint errors, workflow errors, missing changesets
         #   - security: Security vulnerabilities, vulnerable dependencies, audit failures
-        #   - docker: Container vulnerabilities or build failures (when enabled)
         run: |
-          # Check Docker job status
-          # The job can be:
-          # - success: Job ran and passed
-          # - failure: Job ran and failed
-          # - cancelled: Job was cancelled
-          # - skipped: Job condition was not met (e.g., ENABLE_DOCKER_RELEASE != 'true')
-          DOCKER_RESULT="${{ needs.docker.result }}"
-
-          # Docker is acceptable if it succeeded or was skipped
-          # It's a failure only if it actually ran and failed/was cancelled
-          if [ "$DOCKER_RESULT" == "failure" ] || [ "$DOCKER_RESULT" == "cancelled" ]; then
-            DOCKER_FAILED=true
-          else
-            DOCKER_FAILED=false
-          fi
-
           if [ "${{ needs.validate.result }}" != "success" ] || \
-             [ "${{ needs.security.result }}" != "success" ] || \
-             [ "$DOCKER_FAILED" == "true" ]; then
+             [ "${{ needs.security.result }}" != "success" ]; then
             echo "❌ PR validation failed"
             # Check individual job results for debugging
             echo "Validate: ${{ needs.validate.result }}"
             echo "Security: ${{ needs.security.result }}"
-            echo "Docker: ${{ needs.docker.result }}"
             exit 1
           fi
           echo "✅ All PR checks passed"

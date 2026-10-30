@@ -1,8 +1,8 @@
 # =============================================================================
-# WORKFLOW: Multi-Channel Package Publishing
-# PURPOSE: Distribute releases to NPM, GitHub Packages, and Docker Hub
+# WORKFLOW: NPM Package Publishing
+# PURPOSE: Publish the attested release tarball to the npm registry
 # TRIGGERS: GitHub release publication or manual dispatch
-# OUTPUTS: Published packages to configured registries
+# OUTPUTS: Published package on npm with provenance
 # =============================================================================
 
 name: Publish
@@ -28,26 +28,21 @@ env:
   PNPM_VERSION: 11.20.0 # Pinned: Must match packageManager in package.json
   NODE_VERSION: 24 # Pinned: CI toolchain version; engines.node is the consumer floor (>=22.12)
 
-# SECURITY: Minimal required permissions
-# contents: read - Checkout CI scripts
-# packages: write - Publish to GitHub Packages
-# id-token: write - Generate provenance for npm
+# SECURITY: Minimal default permissions. Each job declares exactly what it
+# needs (actions: read to fetch artifacts, id-token: write for npm provenance).
 permissions:
   contents: read
-  packages: write
-  id-token: write
 
 jobs:
   # =============================================================================
   # FETCH NPM PACKAGE
   # Locates and downloads the tarball built and attested by the Main workflow.
-  # Shared by the npm and GitHub Packages jobs so the lookup happens once.
   # =============================================================================
 
   fetch-npm-package:
     name: Fetch NPM package
     runs-on: ubuntu-latest
-    if: vars.ENABLE_NPM_RELEASE == 'true' || vars.ENABLE_GITHUB_PACKAGES == 'true'
+    if: vars.ENABLE_NPM_RELEASE == 'true'
     permissions:
       contents: read
       actions: read # Required to download artifacts from the Main run
@@ -127,7 +122,7 @@ jobs:
             echo "📋 Package contains $(wc -l < ./npm-artifact/npm-package-manifest.txt) files"
           fi
 
-      - name: Share tarball with publishing jobs
+      - name: Share tarball with the npm job
         uses: actions/upload-artifact@v7
         with:
           name: npm-tarball
@@ -176,198 +171,3 @@ jobs:
           # Uses GitHub OIDC for authentication (no NPM_TOKEN needed)
           # --provenance creates a signed attestation of the build
           npm publish "./npm-artifact/$TARBALL" --provenance --access public
-
-  # =============================================================================
-  # GITHUB PACKAGES PUBLISHING
-  # Publishes package to GitHub's npm registry
-  # =============================================================================
-
-  github-packages:
-    name: Publish to GitHub Packages
-    needs: fetch-npm-package
-    runs-on: ubuntu-latest
-    # Only runs if ENABLE_GITHUB_PACKAGES variable is set
-    # Useful for private packages within organization
-    if: vars.ENABLE_GITHUB_PACKAGES == 'true'
-    permissions:
-      contents: read
-      packages: write # Required to publish to GitHub Packages
-    steps:
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          # GitHub Packages npm registry URL
-          registry-url: 'https://npm.pkg.github.com'
-
-      - name: Download NPM package tarball
-        uses: actions/download-artifact@v5
-        with:
-          name: npm-tarball
-          path: ./npm-artifact
-
-      - name: Scope package for GitHub Packages
-        env:
-          TARBALL: ${{ needs.fetch-npm-package.outputs.tarball }}
-          SCOPE: ${{ github.repository_owner }}
-        run: |
-          # GitHub Packages requires the package name to be scoped to the
-          # repository owner, so this copy has to be unpacked and renamed.
-          # It is not covered by the npm provenance attestation; the attested
-          # tarball is the one published to npm unmodified.
-          mkdir scoped
-          tar -xzf "./npm-artifact/$TARBALL" -C scoped
-
-          # private/prepare are already stripped in Main for new releases; the
-          # deletions are kept so re-publishing an older tag still works
-          jq --arg scope "$SCOPE" '.name = "@" + $scope + "/" + .name | del(.private) | del(.scripts.prepare)' \
-            scoped/package/package.json > scoped/package/package.json.tmp
-          mv scoped/package/package.json.tmp scoped/package/package.json
-          echo "📦 Scoped package name: $(jq -r '.name' scoped/package/package.json)"
-
-      - name: Publish to GitHub Packages
-        working-directory: scoped/package
-        run: npm publish --access public
-        env:
-          # SECURITY: Uses GITHUB_TOKEN for authentication
-          # Automatically available, no configuration needed
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  # =============================================================================
-  # DOCKER HUB PUBLISHING
-  # Copies pre-built multi-platform image from GHCR to Docker Hub
-  # =============================================================================
-
-  docker:
-    name: Publish to Docker Hub
-    runs-on: ubuntu-latest
-    # Only runs if ENABLE_DOCKER_RELEASE variable is set
-    # Requires DOCKERHUB_USERNAME and DOCKERHUB_TOKEN secrets
-    if: vars.ENABLE_DOCKER_RELEASE == 'true'
-    permissions:
-      contents: read
-      packages: read # Read from GitHub Container Registry
-    steps:
-      - name: Determine version
-        id: version
-        run: |
-          VERSION="${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}"
-          VERSION="${VERSION#v}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
-          echo "🐳 Publishing Docker image: $VERSION"
-
-      - name: Check Docker credentials
-        id: check-docker
-        # Validate Docker Hub credentials exist
-        # Allows workflow to succeed without Docker publishing
-        run: |
-          if [ -n "${{ secrets.DOCKERHUB_USERNAME }}" ] && [ -n "${{ secrets.DOCKERHUB_TOKEN }}" ]; then
-            echo "has_credentials=true" >> $GITHUB_OUTPUT
-            echo "✅ Docker Hub credentials are configured"
-          else
-            echo "has_credentials=false" >> $GITHUB_OUTPUT
-            echo "⚠️ Docker Hub credentials are not configured, skipping publish"
-            # To fix: Add DOCKERHUB_USERNAME and DOCKERHUB_TOKEN in Settings > Secrets
-            exit 0
-          fi
-
-      - name: Set up Docker Buildx
-        # Required for imagetools commands
-        if: steps.check-docker.outputs.has_credentials == 'true'
-        uses: docker/setup-buildx-action@v3
-
-      - name: Login to GitHub Container Registry
-        # Login to GHCR to pull the pre-built image
-        if: steps.check-docker.outputs.has_credentials == 'true'
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Login to Docker Hub
-        # SECURITY: Authenticate with Docker Hub for pushing
-        if: steps.check-docker.outputs.has_credentials == 'true'
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Copy image from GHCR to Docker Hub
-        # Use buildx imagetools to copy multi-platform image between registries
-        # This properly handles multi-platform manifest lists
-        if: steps.check-docker.outputs.has_credentials == 'true'
-        run: |
-          SOURCE_IMAGE="ghcr.io/${{ github.repository_owner }}/changelog-github-custom"
-          TARGET_REPO="${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}"
-          VERSION="${{ steps.version.outputs.version }}"
-
-          echo "📤 Copying multi-platform image from GHCR to Docker Hub..."
-          echo "Source: $SOURCE_IMAGE:$VERSION"
-          echo "Target: $TARGET_REPO:$VERSION"
-
-          # Copy image with version tag
-          docker buildx imagetools create \
-            --tag $TARGET_REPO:$VERSION \
-            $SOURCE_IMAGE:$VERSION
-
-          echo "🏷️ Creating additional tags..."
-          # Create alias tags for latest, major, and major.minor versions
-          MAJOR=$(echo "$VERSION" | cut -d. -f1)
-          MINOR=$(echo "$VERSION" | cut -d. -f2)
-
-          docker buildx imagetools create --tag $TARGET_REPO:latest $TARGET_REPO:$VERSION
-          docker buildx imagetools create --tag $TARGET_REPO:$MAJOR $TARGET_REPO:$VERSION
-          docker buildx imagetools create --tag $TARGET_REPO:$MAJOR.$MINOR $TARGET_REPO:$VERSION
-
-          echo "✅ Docker image published successfully to Docker Hub"
-          echo "📋 Published tags: $VERSION, latest, $MAJOR, $MAJOR.$MINOR"
-
-  # =============================================================================
-  # NOTIFICATION
-  # Send status updates to team communication channels
-  # =============================================================================
-
-  notify:
-    name: Notify
-    if: always() # Run even if publishing jobs fail
-    needs: [fetch-npm-package, npm, docker, github-packages]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check Slack webhook
-        id: check-slack
-        # Gracefully handle missing Slack configuration
-        run: |
-          if [ -n "${{ secrets.SLACK_WEBHOOK }}" ]; then
-            echo "has_webhook=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_webhook=false" >> $GITHUB_OUTPUT
-            # Optional: Configure SLACK_WEBHOOK in Settings > Secrets
-          fi
-
-      - name: Send Slack notification
-        # Send release status to Slack channel
-        # Shows success/skip/failure for each distribution channel. A channel
-        # that is enabled but skipped (its fetch job failed) counts as failed.
-        if: steps.check-slack.outputs.has_webhook == 'true'
-        uses: slackapi/slack-github-action@v2
-        with:
-          payload: |
-            {
-              "text": "🚀 Release ${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}",
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {"type": "mrkdwn", "text": "*Repo:*\n${{ github.repository }}"},
-                    {"type": "mrkdwn", "text": "*NPM:*\n${{ needs.npm.result == 'success' && '✅' || (needs.npm.result == 'skipped' && vars.ENABLE_NPM_RELEASE != 'true') && '⏭️' || '❌' }}"},
-                    {"type": "mrkdwn", "text": "*Docker:*\n${{ needs.docker.result == 'success' && '✅' || needs.docker.result == 'skipped' && '⏭️' || '❌' }}"},
-                    {"type": "mrkdwn", "text": "*GitHub:*\n${{ needs.github-packages.result == 'success' && '✅' || (needs.github-packages.result == 'skipped' && vars.ENABLE_GITHUB_PACKAGES != 'true') && '⏭️' || '❌' }}"}
-                  ]
-                }
-              ]
-            }
-        env:
-          # SECURITY: Webhook URL for Slack integration
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}

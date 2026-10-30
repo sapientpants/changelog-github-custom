@@ -2,7 +2,7 @@
 # WORKFLOW: Main Branch Release Pipeline
 # PURPOSE: Automate version management, releases, and security scanning on main
 # TRIGGERS: Push to main branch (merges, direct commits)
-# OUTPUTS: GitHub release with artifacts, NPM package, Docker image
+# OUTPUTS: GitHub release with artifacts, NPM package
 # =============================================================================
 
 name: Main
@@ -23,14 +23,12 @@ concurrency:
 # attestations: write - Attach attestations to artifacts
 # security-events: write - Upload security scan results
 # actions: read - Access workflow runs and artifacts
-# packages: write - Push Docker images to GitHub Container Registry
 permissions:
   contents: write
   id-token: write
   attestations: write
   security-events: write
   actions: read
-  packages: write
 
 jobs:
   # =============================================================================
@@ -213,31 +211,15 @@ jobs:
 
   # =============================================================================
   # PREPARE RELEASE ASSETS PHASE
-  # Centralized job for preparing all release artifacts (Docker, binaries, etc.)
+  # Packs and attests the npm tarball that the Publish workflow publishes as-is
   # =============================================================================
-
-  docker:
-    name: Build Docker Image
-    needs: [validate, security, build]
-    if: vars.ENABLE_DOCKER_RELEASE == 'true' && needs.build.outputs.changed == 'true'
-    uses: ./.github/workflows/reusable-docker.yml
-    with:
-      platforms: 'linux/amd64,linux/arm64'
-      save-artifact: true
-      artifact-name: 'docker-image-${{ needs.build.outputs.version }}'
-      image-name: 'changelog-github-custom'
-      version: ${{ needs.build.outputs.version }}
-      tag_sha: ${{ github.sha }}
-      build_artifact: ${{ needs.build.outputs.artifact-name }}
 
   npm:
     name: Prepare NPM Package
     needs: [validate, security, build]
     # The Publish workflow's fetch-npm-package job expects this tarball whenever
-    # either npm or GitHub Packages publishing is enabled
-    if: |
-      (vars.ENABLE_NPM_RELEASE == 'true' || vars.ENABLE_GITHUB_PACKAGES == 'true') &&
-      needs.build.outputs.changed == 'true'
+    # npm publishing is enabled
+    if: vars.ENABLE_NPM_RELEASE == 'true' && needs.build.outputs.changed == 'true'
     runs-on: ubuntu-latest
     outputs:
       built: ${{ steps.pack.outputs.built }}
@@ -324,9 +306,9 @@ jobs:
 
   create-release:
     name: Create GitHub Release
-    needs: [validate, security, build, docker, npm]
-    # Run only if validate, security, and build all succeeded AND docker/npm
-    # either succeeded or were skipped. The explicit result checks are required
+    needs: [validate, security, build, npm]
+    # Run only if validate, security, and build all succeeded AND npm either
+    # succeeded or was skipped. The explicit result checks are required
     # because using !cancelled() disables the implicit success() gate on needs.
     if: |
       needs.build.outputs.changed == 'true' &&
@@ -334,7 +316,6 @@ jobs:
       needs.validate.result == 'success' &&
       needs.security.result == 'success' &&
       needs.build.result == 'success' &&
-      (needs.docker.result == 'success' || needs.docker.result == 'skipped') &&
       (needs.npm.result == 'success' || needs.npm.result == 'skipped')
     runs-on: ubuntu-latest
     outputs:
