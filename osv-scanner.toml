@@ -2,26 +2,40 @@
 # https://google.github.io/osv-scanner/configuration/
 
 # Ignored Vulnerabilities
-# Review and update regularly when fixes become available
+# Review and update regularly when fixes become available.
 
-[[IgnoredVulns]]
-id = "GHSA-9965-vmph-33xx"
-# CVE-2025-56200: URL validation bypass in validator.js isURL() function
+# GHSA-g3hv-75wg-m249: minimatch < 11.0.1 potential denial of service via
+# globparts amplification.
 #
-# Dependency chain: @cyclonedx/cdxgen -> sequelize -> validator@13.15.15
+# Every other minimatch in the lockfile is overridden to >= 11.0.1 in
+# pnpm-workspace.yaml. These two copies cannot be bumped: depcheck@1.4.7
+# (latest) and its dependency multimatch@5.0.0 import minimatch 7.x / 3.x
+# through the old default export, which minimatch 11 no longer provides, so
+# depcheck crashes on startup when overridden.
 #
 # Reason for ignoring:
-# - Dev dependency only (used for SBOM generation via @cyclonedx/cdxgen)
-# - Not used in production code or runtime
-# - Not exposed to user input
-# - Maintainer confirmed fix coming in next validator.js release
-# - Risk: Low (Medium severity, but isolated to dev tooling)
+# - Dev dependency only (depcheck runs in `pnpm deps:check`)
+# - Only ever matches the project's own, hard-coded glob patterns; no
+#   untrusted input reaches it
+# - Not shipped to consumers of the package
 #
 # Action items:
-# - Monitor: https://github.com/validatorjs/validator.js/issues/2600
-# - TODO: Remove this ignore when validator.js releases fix
-# - TODO: Update @cyclonedx/cdxgen after validator fix is released
+# - Remove when depcheck releases a version on minimatch >= 11, or if
+#   depcheck is replaced
 #
-# Added: 2025-10-14
-# Review: 2025-11-14 (30 days)
-reason = "Dev dependency for SBOM generation only. Not used in production. Awaiting upstream fix in validator.js."
+# Added: 2026-10-31
+# Review: 2026-11-30 (30 days)
+
+[[PackageOverrides]]
+name = "minimatch"
+version = "7.4.9"
+ecosystem = "npm"
+ignore = true
+reason = "Dev-only dependency of depcheck; cannot be bumped without breaking depcheck. See comment above."
+
+[[PackageOverrides]]
+name = "minimatch"
+version = "3.1.5"
+ecosystem = "npm"
+ignore = true
+reason = "Dev-only dependency of depcheck via multimatch; cannot be bumped without breaking depcheck. See comment above."
