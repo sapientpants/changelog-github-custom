@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 # Wrapper script for actionlint - GitHub Actions workflow linter
-# Checks if actionlint is installed and provides installation instructions if not
+# Checks if actionlint is installed and provides installation instructions if not.
+# In CI the binary is required: a missing install must fail the job, not pass silently.
 
 set -uo pipefail
 
@@ -14,10 +15,12 @@ NC='\033[0m' # No Color
 
 # Check if actionlint is installed
 if ! command -v actionlint &> /dev/null; then
-    # In CI environments during release, skip actionlint since workflows were already validated in PR
+    # In CI the install step is responsible for providing the binary. Never skip here:
+    # a silent exit 0 would let a broken install step make workflow linting "pass".
     if [ "${CI:-false}" = "true" ] || [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
-        echo -e "${YELLOW}Skipping actionlint in CI (already validated in PR workflow)${NC}"
-        exit 0
+        echo -e "${RED}Error: actionlint is not installed in CI${NC}"
+        echo "Check the 'Install actionlint' step in .github/workflows/reusable-validate.yml"
+        exit 1
     fi
     
     # In local development, provide installation instructions
