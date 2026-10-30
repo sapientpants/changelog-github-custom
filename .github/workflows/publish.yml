@@ -29,7 +29,7 @@ env:
   NODE_VERSION: 24 # Pinned: Must match engines.node in package.json
 
 # SECURITY: Minimal required permissions
-# contents: read - Checkout code at release tag
+# contents: read - Checkout CI scripts
 # packages: write - Publish to GitHub Packages
 # id-token: write - Generate provenance for npm
 permissions:
@@ -39,20 +39,22 @@ permissions:
 
 jobs:
   # =============================================================================
-  # NPM PUBLISHING
-  # Publishes package to npm registry with provenance
+  # FETCH NPM PACKAGE
+  # Locates and downloads the tarball built and attested by the Main workflow.
+  # Shared by the npm and GitHub Packages jobs so the lookup happens once.
   # =============================================================================
 
-  npm:
-    name: Publish to NPM
+  fetch-npm-package:
+    name: Fetch NPM package
     runs-on: ubuntu-latest
-    # Only runs if ENABLE_NPM_RELEASE variable is set to 'true'
-    # Configure in Settings > Secrets and variables > Variables
-    if: vars.ENABLE_NPM_RELEASE == 'true'
+    if: vars.ENABLE_NPM_RELEASE == 'true' || vars.ENABLE_GITHUB_PACKAGES == 'true'
     permissions:
       contents: read
-      id-token: write # Required for npm provenance
-      actions: read # Required to download artifacts
+      actions: read # Required to download artifacts from the Main run
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      tarball: ${{ steps.verify.outputs.tarball }}
     steps:
       - name: Determine version
         id: version
@@ -63,14 +65,7 @@ jobs:
           VERSION="${VERSION#v}"  # Remove 'v' prefix
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=v$VERSION" >> $GITHUB_OUTPUT
-          echo "📦 Publishing to NPM: $VERSION"
-
-      - name: Checkout code
-        uses: actions/checkout@v5
-        with:
-          # IMPORTANT: Checkout the exact release tag, not latest main
-          # This ensures we publish exactly what was released
-          ref: ${{ steps.version.outputs.tag }}
+          echo "📦 Fetching NPM package for version $VERSION"
 
       - name: Checkout CI scripts
         # Run helper scripts from the workflow's own commit, not the release
@@ -78,9 +73,82 @@ jobs:
         uses: actions/checkout@v5
         with:
           ref: ${{ github.workflow_sha }}
-          path: .ci-scripts
           sparse-checkout: .github/scripts
 
+      - name: Determine artifact source
+        id: artifact
+        # Find the NPM package artifact from the successful Main run that built
+        # this release. The script waits for the Main run to complete, since the
+        # release event fires while Main is still in progress.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          chmod +x .github/scripts/determine-artifact.sh
+          .github/scripts/determine-artifact.sh \
+            --tag "${{ steps.version.outputs.tag }}" \
+            --repo "${{ github.repository }}" \
+            --version "${{ steps.version.outputs.version }}" \
+            --prefix "npm-package" \
+            --output "$GITHUB_OUTPUT"
+
+      - name: Download pre-built NPM package
+        # Download the pre-built, pre-scanned, attested NPM package from Main
+        uses: actions/download-artifact@v5
+        with:
+          name: ${{ steps.artifact.outputs.artifact_name }}
+          path: ./npm-artifact
+          run-id: ${{ steps.artifact.outputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify tarball
+        id: verify
+        run: |
+          TARBALL=$(find ./npm-artifact -name "*.tgz" -type f | head -1)
+          if [ -z "$TARBALL" ]; then
+            echo "❌ No .tgz file found in artifact!"
+            echo "Contents of ./npm-artifact:"
+            ls -la ./npm-artifact/
+            exit 1
+          fi
+
+          # The tarball is published unmodified, so its package.json must
+          # already carry the released version
+          PACKED_VERSION=$(tar -xzOf "$TARBALL" package/package.json | jq -r '.version')
+          if [ "$PACKED_VERSION" != "${{ steps.version.outputs.version }}" ]; then
+            echo "❌ Tarball version $PACKED_VERSION does not match release ${{ steps.version.outputs.version }}"
+            exit 1
+          fi
+
+          echo "tarball=$(basename "$TARBALL")" >> $GITHUB_OUTPUT
+          echo "✅ Using pre-built NPM package: $TARBALL (version $PACKED_VERSION)"
+          if [ -f ./npm-artifact/npm-package-manifest.txt ]; then
+            echo "📋 Package contains $(wc -l < ./npm-artifact/npm-package-manifest.txt) files"
+          fi
+
+      - name: Share tarball with publishing jobs
+        uses: actions/upload-artifact@v7
+        with:
+          name: npm-tarball
+          path: ./npm-artifact/*.tgz
+          retention-days: 1 # Only needed for this workflow run
+          if-no-files-found: error
+
+  # =============================================================================
+  # NPM PUBLISHING
+  # Publishes the attested tarball to the npm registry with provenance
+  # =============================================================================
+
+  npm:
+    name: Publish to NPM
+    needs: fetch-npm-package
+    runs-on: ubuntu-latest
+    # Only runs if ENABLE_NPM_RELEASE variable is set to 'true'
+    # Configure in Settings > Secrets and variables > Variables
+    if: vars.ENABLE_NPM_RELEASE == 'true'
+    permissions:
+      contents: read
+      id-token: write # Required for npm provenance
+    steps:
       - name: Setup Node.js
         # Node.js is required for npm publish command
         uses: actions/setup-node@v4
@@ -89,68 +157,21 @@ jobs:
           # Configure npm registry for authentication
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Determine artifact source
-        id: artifact
-        # Use shared script to find the correct NPM package artifact from the release build
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          chmod +x .ci-scripts/.github/scripts/determine-artifact.sh
-          .ci-scripts/.github/scripts/determine-artifact.sh \
-            --tag "${{ steps.version.outputs.tag }}" \
-            --repo "${{ github.repository }}" \
-            --version "${{ steps.version.outputs.version }}" \
-            --prefix "npm-package" \
-            --output "$GITHUB_OUTPUT"
-
-      - name: Download pre-built NPM package
-        id: download
-        # Download the pre-built, pre-scanned NPM package from main workflow
-        # This ensures we publish exactly what was tested
+      - name: Download NPM package tarball
         uses: actions/download-artifact@v5
         with:
-          name: ${{ steps.artifact.outputs.artifact_name }}
+          name: npm-tarball
           path: ./npm-artifact
-          run-id: ${{ steps.artifact.outputs.run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract pre-built package
-        run: |
-          # Check if any .tgz files exist
-          TARBALL=$(find ./npm-artifact -name "*.tgz" -type f | head -1)
-          if [ -z "$TARBALL" ]; then
-            echo "❌ No .tgz file found in artifact!"
-            echo "Contents of ./npm-artifact:"
-            ls -la ./npm-artifact/
-            exit 1
-          fi
-
-          echo "✅ Using pre-built NPM package from main workflow"
-          echo "📦 Extracting: $TARBALL"
-          tar -xzf "$TARBALL"
-
-          # The package extracts to a 'package' directory
-          # We need to move its contents to the current directory
-          if [ -d package ]; then
-            cp -r package/* .
-            rm -rf package
-          fi
-
-          echo "📋 Verified package contents from manifest"
-          if [ -f ./npm-artifact/npm-package-manifest.txt ]; then
-            echo "Package contains $(wc -l < ./npm-artifact/npm-package-manifest.txt) files"
-          fi
 
       - name: Publish to NPM
         run: |
-          # Remove private flag and prepare script (which runs husky)
-          # The prepare script runs even with --ignore-scripts, so we must remove it
-          jq 'del(.private) | del(.scripts.prepare)' package.json > tmp.json && mv tmp.json package.json
-
-          # Publish with provenance for supply chain security
+          # Publish the tarball exactly as built and attested by the Main
+          # workflow. Do NOT extract and re-pack it: npm would produce a
+          # different archive and the provenance attestation created in Main
+          # would no longer match what is published.
           # Uses GitHub OIDC for authentication (no NPM_TOKEN needed)
           # --provenance creates a signed attestation of the build
-          npm publish --provenance --access public
+          npm publish "./npm-artifact/${{ needs.fetch-npm-package.outputs.tarball }}" --provenance --access public
 
   # =============================================================================
   # GITHUB PACKAGES PUBLISHING
@@ -159,6 +180,7 @@ jobs:
 
   github-packages:
     name: Publish to GitHub Packages
+    needs: fetch-npm-package
     runs-on: ubuntu-latest
     # Only runs if ENABLE_GITHUB_PACKAGES variable is set
     # Useful for private packages within organization
@@ -166,32 +188,7 @@ jobs:
     permissions:
       contents: read
       packages: write # Required to publish to GitHub Packages
-      id-token: write # Required for provenance
-      actions: read # Required to download artifacts
     steps:
-      - name: Determine version
-        id: version
-        run: |
-          VERSION="${{ github.event_name == 'release' && github.event.release.tag_name || inputs.tag }}"
-          VERSION="${VERSION#v}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "tag=v$VERSION" >> $GITHUB_OUTPUT
-          echo "📦 Publishing to GitHub Packages: $VERSION"
-
-      - name: Checkout code
-        uses: actions/checkout@v5
-        with:
-          ref: ${{ steps.version.outputs.tag }}
-
-      - name: Checkout CI scripts
-        # Run helper scripts from the workflow's own commit, not the release
-        # tag, so script fixes also apply when re-publishing an older tag
-        uses: actions/checkout@v5
-        with:
-          ref: ${{ github.workflow_sha }}
-          path: .ci-scripts
-          sparse-checkout: .github/scripts
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -199,59 +196,31 @@ jobs:
           # GitHub Packages npm registry URL
           registry-url: 'https://npm.pkg.github.com'
 
-      - name: Determine artifact source
-        id: artifact
-        # Use shared script to find the correct NPM package artifact (same as npm job)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          chmod +x .ci-scripts/.github/scripts/determine-artifact.sh
-          .ci-scripts/.github/scripts/determine-artifact.sh \
-            --tag "${{ steps.version.outputs.tag }}" \
-            --repo "${{ github.repository }}" \
-            --version "${{ steps.version.outputs.version }}" \
-            --prefix "npm-package" \
-            --output "$GITHUB_OUTPUT"
-
-      - name: Download pre-built NPM package
-        id: download
+      - name: Download NPM package tarball
         uses: actions/download-artifact@v5
         with:
-          name: ${{ steps.artifact.outputs.artifact_name }}
+          name: npm-tarball
           path: ./npm-artifact
-          run-id: ${{ steps.artifact.outputs.run_id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract pre-built package
+      - name: Scope package for GitHub Packages
         run: |
-          # Check if any .tgz files exist
-          TARBALL=$(find ./npm-artifact -name "*.tgz" -type f | head -1)
-          if [ -z "$TARBALL" ]; then
-            echo "❌ No .tgz file found in artifact!"
-            echo "Contents of ./npm-artifact:"
-            ls -la ./npm-artifact/
-            exit 1
-          fi
+          # GitHub Packages requires the package name to be scoped to the
+          # repository owner, so this copy has to be unpacked and renamed.
+          # It is not covered by the npm provenance attestation; the attested
+          # tarball is the one published to npm unmodified.
+          mkdir scoped
+          tar -xzf "./npm-artifact/${{ needs.fetch-npm-package.outputs.tarball }}" -C scoped
 
-          echo "✅ Using pre-built NPM package from main workflow"
-          echo "📦 Extracting: $TARBALL"
-          tar -xzf "$TARBALL"
-
-          # The package extracts to a 'package' directory
-          if [ -d package ]; then
-            cp -r package/* .
-            rm -rf package
-          fi
-
-          echo "📋 Verified package contents"
+          # private/prepare are already stripped in Main for new releases; the
+          # deletions are kept so re-publishing an older tag still works
+          jq '.name = "@${{ github.repository_owner }}/" + .name | del(.private) | del(.scripts.prepare)' \
+            scoped/package/package.json > scoped/package/package.json.tmp
+          mv scoped/package/package.json.tmp scoped/package/package.json
+          echo "📦 Scoped package name: $(jq -r '.name' scoped/package/package.json)"
 
       - name: Publish to GitHub Packages
-        run: |
-          # Scope package name to organization and remove private flag and prepare script
-          # The prepare script runs even with --ignore-scripts, so we must remove it
-          jq '.name = "@${{ github.repository_owner }}/" + .name | del(.private) | del(.scripts.prepare)' package.json > tmp.json && mv tmp.json package.json
-
-          npm publish --access public
+        working-directory: scoped/package
+        run: npm publish --access public
         env:
           # SECURITY: Uses GITHUB_TOKEN for authentication
           # Automatically available, no configuration needed
@@ -356,7 +325,7 @@ jobs:
   notify:
     name: Notify
     if: always() # Run even if publishing jobs fail
-    needs: [npm, docker, github-packages]
+    needs: [fetch-npm-package, npm, docker, github-packages]
     runs-on: ubuntu-latest
     steps:
       - name: Check Slack webhook
@@ -372,7 +341,8 @@ jobs:
 
       - name: Send Slack notification
         # Send release status to Slack channel
-        # Shows success/skip/failure for each distribution channel
+        # Shows success/skip/failure for each distribution channel. A channel
+        # that is enabled but skipped (its fetch job failed) counts as failed.
         if: steps.check-slack.outputs.has_webhook == 'true'
         uses: slackapi/slack-github-action@v2
         with:
@@ -384,9 +354,9 @@ jobs:
                   "type": "section",
                   "fields": [
                     {"type": "mrkdwn", "text": "*Repo:*\n${{ github.repository }}"},
-                    {"type": "mrkdwn", "text": "*NPM:*\n${{ needs.npm.result == 'success' && '✅' || needs.npm.result == 'skipped' && '⏭️' || '❌' }}"},
+                    {"type": "mrkdwn", "text": "*NPM:*\n${{ needs.npm.result == 'success' && '✅' || (needs.npm.result == 'skipped' && vars.ENABLE_NPM_RELEASE != 'true') && '⏭️' || '❌' }}"},
                     {"type": "mrkdwn", "text": "*Docker:*\n${{ needs.docker.result == 'success' && '✅' || needs.docker.result == 'skipped' && '⏭️' || '❌' }}"},
-                    {"type": "mrkdwn", "text": "*GitHub:*\n${{ needs.github-packages.result == 'success' && '✅' || needs.github-packages.result == 'skipped' && '⏭️' || '❌' }}"}
+                    {"type": "mrkdwn", "text": "*GitHub:*\n${{ needs.github-packages.result == 'success' && '✅' || (needs.github-packages.result == 'skipped' && vars.ENABLE_GITHUB_PACKAGES != 'true') && '⏭️' || '❌' }}"}
                   ]
                 }
               ]

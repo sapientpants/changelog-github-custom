@@ -262,10 +262,22 @@ jobs:
         # Install all dependencies for packaging (dev and prod)
         run: pnpm install --frozen-lockfile
 
+      - name: Prepare package.json for publishing
+        run: |
+          # Strip fields that must not ship in the published package BEFORE the
+          # tarball is packed and attested. The Publish workflow publishes this
+          # exact tarball, so any adjustment made there would break provenance.
+          # - private: publish-blocking metadata
+          # - scripts.prepare: runs husky, a dev dependency, on install/pack
+          jq 'del(.private) | del(.scripts.prepare)' package.json > package.json.tmp
+          mv package.json.tmp package.json
+          echo "✅ Stripped private flag and prepare script from package.json"
+
       - name: Create NPM package
         id: pack
         run: |
-          # Create the NPM package tarball
+          # Create the NPM package tarball. This is the artifact that gets
+          # attested below and published as-is by the Publish workflow.
           # Use tail -1 to get just the filename, as npm pack may output additional text
           NPM_PACKAGE=$(npm pack 2>/dev/null | tail -1)
           echo "📦 Created NPM package: $NPM_PACKAGE"
@@ -374,8 +386,10 @@ jobs:
 
       # =============================================================================
       # SUPPLY CHAIN SECURITY
-      # Generate attestations BEFORE creating release to avoid race condition
-      # This ensures the Main workflow is complete before triggering Publish workflow
+      # Generate attestations BEFORE creating the release so they exist by the
+      # time the Publish workflow runs. NOTE: publishing the release triggers
+      # Publish while this run is still in progress; determine-artifact.sh
+      # waits for this run to complete and succeed before trusting its artifacts.
       # =============================================================================
 
       - name: Generate attestations
