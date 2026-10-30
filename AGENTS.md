@@ -8,22 +8,22 @@
 
 ## Key Commands
 
-| Command                | What it does                                                                                     |
-| ---------------------- | ------------------------------------------------------------------------------------------------ |
-| `pnpm verify`          | Full precommit: audit, deps check, typecheck, lint (TS/ES/YAML/Markdown), format, tests          |
-| `pnpm quick-check`     | Fast path: typecheck + lint + test (no format/workflows)                                         |
-| `pnpm build`           | Clean + ESM (`tsconfig.esm.json`) + CJS (`tsconfig.cjs.json`) — three separate `tsc` invocations |
-| `pnpm test`            | `vitest run --reporter=verbose`                                                                  |
-| `pnpm changeset`       | Create a changeset (generates file in `.changeset/`)                                             |
-| `pnpm release`         | `changeset version && pnpm build`                                                                |
-| `pnpm release:publish` | `pnpm build && changeset publish`                                                                |
-| `pnpm ci:local`        | Run CI workflows locally (`./scripts/ci-local.sh`)                                               |
+| Command                | What it does                                                                            |
+| ---------------------- | --------------------------------------------------------------------------------------- |
+| `pnpm verify`          | Full precommit: audit, deps check, typecheck, lint (TS/ES/YAML/Markdown), format, tests |
+| `pnpm quick-check`     | Fast path: typecheck + lint + test (no format/workflows)                                |
+| `pnpm build`           | Clean + ESM (`tsconfig.esm.json`) — single `tsc` invocation emits JS and declarations   |
+| `pnpm test`            | `vitest run --reporter=verbose`                                                         |
+| `pnpm changeset`       | Create a changeset (generates file in `.changeset/`)                                    |
+| `pnpm release`         | `changeset version && pnpm build`                                                       |
+| `pnpm release:publish` | `pnpm build && changeset publish`                                                       |
+| `pnpm ci:local`        | Run CI workflows locally (`./scripts/ci-local.sh`)                                      |
 
 ## Architecture
 
 - **Single library**: `src/changelog-custom.ts` — a Changesets `ChangelogFunctions` implementation
-- **Dual output**: CJS at `dist/cjs/`, ESM at `dist/esm/`, types at `dist/types/`
-- **Three tsconfigs**: base (`tsconfig.json`), ESM (`tsconfig.esm.json`), CJS (`tsconfig.cjs.json`) — build uses ESM+CJS configs, typecheck uses base
+- **ESM-only output**: JS at `dist/esm/`, types at `dist/types/` (no CJS build — `"type": "module"` means `tsc` emits ESM regardless; `require()` works via Node 22.12+ `require(esm)`)
+- **Two tsconfigs**: base (`tsconfig.json`) for typecheck/lint, ESM (`tsconfig.esm.json`) for build
 - **Tests**: `tests/changelog-custom.spec.ts` — mocks `@changesets/get-github-info` via `vi.mock()`
 - **Changesets config**: `.changeset/config.json` — uses custom changelog generator (`../dist/esm/changelog-custom.js`), `baseBranch: "main"`, `commit: false`
 
