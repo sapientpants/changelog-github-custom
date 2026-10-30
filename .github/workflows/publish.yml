@@ -26,7 +26,7 @@ concurrency:
 # Global environment variables for consistency
 env:
   PNPM_VERSION: 11.20.0 # Pinned: Must match packageManager in package.json
-  NODE_VERSION: 24 # Pinned: CI toolchain version; engines.node is the consumer floor (>=22)
+  NODE_VERSION: 24 # Pinned: CI toolchain version; engines.node is the consumer floor (>=22.12)
 
 # SECURITY: Minimal required permissions
 # contents: read - Checkout CI scripts
