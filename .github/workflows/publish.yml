@@ -102,6 +102,8 @@ jobs:
 
       - name: Verify tarball
         id: verify
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
         run: |
           TARBALL=$(find ./npm-artifact -name "*.tgz" -type f | head -1)
           if [ -z "$TARBALL" ]; then
@@ -114,8 +116,8 @@ jobs:
           # The tarball is published unmodified, so its package.json must
           # already carry the released version
           PACKED_VERSION=$(tar -xzOf "$TARBALL" package/package.json | jq -r '.version')
-          if [ "$PACKED_VERSION" != "${{ steps.version.outputs.version }}" ]; then
-            echo "❌ Tarball version $PACKED_VERSION does not match release ${{ steps.version.outputs.version }}"
+          if [ "$PACKED_VERSION" != "$RELEASE_VERSION" ]; then
+            echo "❌ Tarball version $PACKED_VERSION does not match release $RELEASE_VERSION"
             exit 1
           fi
 
@@ -164,6 +166,8 @@ jobs:
           path: ./npm-artifact
 
       - name: Publish to NPM
+        env:
+          TARBALL: ${{ needs.fetch-npm-package.outputs.tarball }}
         run: |
           # Publish the tarball exactly as built and attested by the Main
           # workflow. Do NOT extract and re-pack it: npm would produce a
@@ -171,7 +175,7 @@ jobs:
           # would no longer match what is published.
           # Uses GitHub OIDC for authentication (no NPM_TOKEN needed)
           # --provenance creates a signed attestation of the build
-          npm publish "./npm-artifact/${{ needs.fetch-npm-package.outputs.tarball }}" --provenance --access public
+          npm publish "./npm-artifact/$TARBALL" --provenance --access public
 
   # =============================================================================
   # GITHUB PACKAGES PUBLISHING
@@ -203,17 +207,20 @@ jobs:
           path: ./npm-artifact
 
       - name: Scope package for GitHub Packages
+        env:
+          TARBALL: ${{ needs.fetch-npm-package.outputs.tarball }}
+          SCOPE: ${{ github.repository_owner }}
         run: |
           # GitHub Packages requires the package name to be scoped to the
           # repository owner, so this copy has to be unpacked and renamed.
           # It is not covered by the npm provenance attestation; the attested
           # tarball is the one published to npm unmodified.
           mkdir scoped
-          tar -xzf "./npm-artifact/${{ needs.fetch-npm-package.outputs.tarball }}" -C scoped
+          tar -xzf "./npm-artifact/$TARBALL" -C scoped
 
           # private/prepare are already stripped in Main for new releases; the
           # deletions are kept so re-publishing an older tag still works
-          jq '.name = "@${{ github.repository_owner }}/" + .name | del(.private) | del(.scripts.prepare)' \
+          jq --arg scope "$SCOPE" '.name = "@" + $scope + "/" + .name | del(.private) | del(.scripts.prepare)' \
             scoped/package/package.json > scoped/package/package.json.tmp
           mv scoped/package/package.json.tmp scoped/package/package.json
           echo "📦 Scoped package name: $(jq -r '.name' scoped/package/package.json)"

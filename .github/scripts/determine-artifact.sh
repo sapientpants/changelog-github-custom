@@ -180,6 +180,13 @@ if [ -n "$MAIN_RUN_ID" ]; then
       exit 1
     fi
 
+    # The API still lists expired artifacts; downloading one fails later with
+    # a far less helpful error
+    if [ "$(echo "$ARTIFACT" | jq -r '.expired')" = "true" ]; then
+      echo "❌ Artifact $ARTIFACT_NAME in workflow run $MAIN_RUN_ID has expired and can no longer be downloaded"
+      exit 1
+    fi
+
     RUN_ID="$MAIN_RUN_ID"
     BUILD_SHA="$PARENT_SHA"
   else

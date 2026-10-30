@@ -228,7 +228,11 @@ jobs:
   npm:
     name: Prepare NPM Package
     needs: [validate, security, build]
-    if: vars.ENABLE_NPM_RELEASE == 'true' && needs.build.outputs.changed == 'true'
+    # The Publish workflow's fetch-npm-package job expects this tarball whenever
+    # either npm or GitHub Packages publishing is enabled
+    if: |
+      (vars.ENABLE_NPM_RELEASE == 'true' || vars.ENABLE_GITHUB_PACKAGES == 'true') &&
+      needs.build.outputs.changed == 'true'
     runs-on: ubuntu-latest
     outputs:
       built: ${{ steps.pack.outputs.built }}
