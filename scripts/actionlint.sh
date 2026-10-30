@@ -19,7 +19,7 @@ if ! command -v actionlint &> /dev/null; then
     # a silent exit 0 would let a broken install step make workflow linting "pass".
     if [ "${CI:-false}" = "true" ] || [ "${GITHUB_ACTIONS:-false}" = "true" ]; then
         echo -e "${RED}Error: actionlint is not installed in CI${NC}"
-        echo "Check the 'Install actionlint' step in .github/workflows/reusable-validate.yml"
+        echo "Add the .github/actions/install-actionlint step to this job before any step that commits or runs lint:workflows"
         exit 1
     fi
     

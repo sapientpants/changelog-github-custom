@@ -124,30 +124,9 @@ jobs:
         run: pnpm format
 
       - name: Install actionlint
-        # Download a pinned actionlint release and verify its SHA-256 before use
+        # Pinned, checksum-verified download shared with the release build job
         # FAILS IF: Download fails or the archive does not match the expected checksum
-        # UPDATE: Bump ACTIONLINT_VERSION and ACTIONLINT_SHA256 together. The checksum
-        # is the linux_amd64 entry in actionlint_<version>_checksums.txt on the release:
-        # https://github.com/rhysd/actionlint/releases
-        env:
-          ACTIONLINT_VERSION: 1.7.12
-          ACTIONLINT_SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
-        run: |
-          set -euo pipefail
-          archive="actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
-          url="https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/${archive}"
-          tmp="$(mktemp -d)"
-          bin_dir="${RUNNER_TEMP}/actionlint-bin"
-
-          echo "Downloading ${url}"
-          curl -fsSL --retry 3 --retry-delay 2 -o "${tmp}/${archive}" "${url}"
-          echo "${ACTIONLINT_SHA256}  ${tmp}/${archive}" | sha256sum --check --strict
-
-          mkdir -p "${bin_dir}"
-          tar -xzf "${tmp}/${archive}" -C "${bin_dir}" actionlint
-          chmod 0755 "${bin_dir}/actionlint"
-          echo "${bin_dir}" >> "${GITHUB_PATH}"
-          "${bin_dir}/actionlint" --version
+        uses: ./.github/actions/install-actionlint
 
       - name: Workflow linting
         # Validate GitHub Actions workflow files
