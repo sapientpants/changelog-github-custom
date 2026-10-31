@@ -33,6 +33,7 @@ if [ "${#files[@]}" -eq 0 ]; then
 fi
 
 violations=0
+checked=0
 while IFS=: read -r file line content; do
     # Strip leading whitespace and an optional list dash
     ref="${content#"${content%%[![:space:]]*}"}"
@@ -46,11 +47,19 @@ while IFS=: read -r file line content; do
         uses:\ docker://*) continue ;;
     esac
 
+    checked=$((checked + 1))
     if ! [[ "$ref" =~ ^uses:\ [^@[:space:]]+@[0-9a-f]{40}\ #\ v[0-9][^[:space:]]*$ ]]; then
         echo -e "${RED}${file}:${line}: not pinned to a commit SHA with a version comment:${NC} ${ref}"
         violations=$((violations + 1))
     fi
 done < <(grep -nHE '^\s*(- )?(#\s*)?uses:' "${files[@]}" || true)
+
+# A grep that matches nothing (edited pattern, unsupported syntax, read error
+# hidden by `|| true`) must not turn into a vacuous pass.
+if [ "$checked" -eq 0 ]; then
+    echo -e "${RED}No external \`uses:\` references were found to check; refusing to pass vacuously${NC}"
+    exit 1
+fi
 
 if [ "$violations" -gt 0 ]; then
     echo ""
