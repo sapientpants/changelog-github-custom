@@ -1,5 +1,11 @@
 # changelog-github-custom
 
+## 1.2.11
+
+### Patch Changes
+
+- [#107](https://github.com/sapientpants/changelog-github-custom/pull/107) [`3ac45f9`](https://github.com/sapientpants/changelog-github-custom/commit/3ac45f9456b8f92482300ee7c405de15c5244b4c) - Document install, configuration, summary front-matter and output format in the README, and fix the missing-`repo` error message so it names `changelog-github-custom` instead of `@changesets/changelog-github`.
+
 ## 1.2.10
 
 ### Patch Changes
