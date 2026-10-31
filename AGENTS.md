@@ -8,16 +8,15 @@
 
 ## Key Commands
 
-| Command                | What it does                                                                            |
-| ---------------------- | --------------------------------------------------------------------------------------- |
-| `pnpm verify`          | Full precommit: audit, deps check, typecheck, lint (TS/ES/YAML/Markdown), format, tests |
-| `pnpm quick-check`     | Fast path: typecheck + lint + test (no format/workflows)                                |
-| `pnpm build`           | Clean + ESM (`tsconfig.esm.json`) — single `tsc` invocation emits JS and declarations   |
-| `pnpm test`            | `vitest run --reporter=verbose`                                                         |
-| `pnpm changeset`       | Create a changeset (generates file in `.changeset/`)                                    |
-| `pnpm release`         | `changeset version && pnpm build`                                                       |
-| `pnpm release:publish` | `pnpm build && changeset publish`                                                       |
-| `pnpm ci:local`        | Run CI workflows locally (`./scripts/ci-local.sh`)                                      |
+| Command                | What it does                                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `pnpm verify`          | Full CI-equivalent set: audit, deps check, typecheck, lint (TS/ES/YAML/Markdown/workflows), format, tests+coverage |
+| `pnpm quick-check`     | Fast path: typecheck + lint + test (what `pre-push` runs)                                                          |
+| `pnpm build`           | Clean + ESM (`tsconfig.esm.json`) — single `tsc` invocation emits JS and declarations                              |
+| `pnpm test`            | `vitest run --reporter=verbose`                                                                                    |
+| `pnpm changeset`       | Create a changeset (generates file in `.changeset/`)                                                               |
+| `pnpm release`         | `changeset version && pnpm build`                                                                                  |
+| `pnpm release:publish` | `pnpm build && changeset publish`                                                                                  |
 
 ## Architecture
 
@@ -31,10 +30,10 @@
 
 - **SSH auth / agent**: if a `git push`/`git fetch` fails with an SSH auth or "identity" error, **stop and wait** for the user to handle authentication — do NOT rewrite remotes, `git config`, or debug ssh. Original `origin` must stay an **ssh** remote (`git@github.com:...`), never https.
 
-- **Husky**: pre-commit, commit-msg (commitlint conventional), pre-push
-- **Pre-push blocks `--no-verify`**: intentionally disallowed — all commits must pass hooks
+- **Husky**: `pre-commit` → `lint-staged` (prettier, eslint, markdownlint, yamllint on staged files); `commit-msg` → commitlint; `pre-push` → `pnpm quick-check`
+- **Hooks are a convenience, not enforcement**: `--no-verify` skips them entirely and cannot be detected client-side. The full check set (`pnpm verify`) runs in CI on every PR/push, and branch protection on `main` is the gate
 - **Commit messages**: conventional commits via `@commitlint/config-conventional`
-- **lint-staged**: runs prettier, eslint, markdownlint, yamllint on staged files
+- **Keep `verify` and CI in sync**: `reusable-validate.yml` + `reusable-security.yml` must run the same checks as the `verify` script
 
 ## Constraints
 
