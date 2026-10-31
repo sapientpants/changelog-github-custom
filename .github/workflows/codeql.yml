@@ -31,7 +31,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           fetch-depth: 0 # Full history for accurate analysis
 
@@ -43,7 +43,7 @@ jobs:
       - name: Initialize CodeQL
         # Setup CodeQL for JavaScript/TypeScript analysis
         # Detects: XSS, SQL injection, path traversal, command injection, etc.
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@4bfa242aa49c5f7c6770b98670d354a7dfac05f8 # v3.39.1
         with:
           languages: javascript-typescript
           # Optionally specify additional queries to run
@@ -52,6 +52,6 @@ jobs:
       - name: Perform CodeQL Analysis
         # Analyze code and upload results to Security tab
         # Results viewable at: Security > Code scanning alerts
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@4bfa242aa49c5f7c6770b98670d354a7dfac05f8 # v3.39.1
         with:
           category: '/language:javascript-typescript'

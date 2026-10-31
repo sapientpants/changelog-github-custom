@@ -62,8 +62,8 @@ with it so the Publish workflow fires.
   - `test`: Runs the test suite with coverage and uploads the coverage report
     as a workflow artifact
   - `lint`: Type checking, ESLint, Prettier, markdownlint, yamllint, depcheck,
-    actionlint, then `pnpm changeset:status` to require a changeset on the
-    branch
+    actionlint, the action pin check, then `pnpm changeset:status` to require a
+    changeset on the branch
 - **security** (`reusable-security.yml`, with `run-osv-scan: false`):
   - `audit`: `pnpm audit --audit-level high`
   - `osv-scan`: skipped on pull requests
@@ -132,6 +132,30 @@ to main.
 
 - **analyze**: Runs the CodeQL `javascript-typescript` analysis from source and
   uploads findings to the Security tab. It does not install dependencies.
+
+## Pinned Actions
+
+Every external action and reusable workflow referenced from `.github/` is
+pinned to a full 40-character commit SHA, with the release tag kept as a
+trailing comment so the version stays readable:
+
+```yaml
+uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+```
+
+A major tag such as `@v5` can be moved by the action's maintainer or by anyone
+who compromises their repository. The release path runs with `id-token: write`
+and the `RELEASE_TOKEN` secret, so a moved tag there would have the most
+impact. Pinning to a SHA means nothing changes in CI without a change here.
+
+- `scripts/check-action-pins.sh` (`pnpm lint:action-pins`) runs in the
+  `validate` workflow and in `pnpm verify`. It fails when any `uses:` points at
+  a tag or branch, or lacks the version comment.
+- Dependabot (`github-actions` ecosystem in `.github/dependabot.yml`) opens
+  weekly PRs that bump the SHA and the version comment together.
+- To update an action by hand, resolve the release tag to its commit with
+  `gh api repos/<owner>/<repo>/commits/<tag> --jq .sha` and update both the SHA
+  and the comment.
 
 ## Configuration
 

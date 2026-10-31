@@ -1,7 +1,7 @@
 # =============================================================================
 # REUSABLE WORKFLOW: Code Validation Suite
 # PURPOSE: Run all quality checks (typecheck, lint, format, markdown/yaml lint,
-#          depcheck, workflow lint, test). Mirrors `pnpm verify` (audit lives in
+#          depcheck, workflow lint, action pin check, test). Mirrors `pnpm verify` (audit lives in
 #          reusable-security.yml). Keep this list and the `verify` script in sync.
 # USAGE: Called by PR and main workflows for consistent validation
 # OUTPUTS: Coverage reports when requested
@@ -38,19 +38,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           fetch-depth: 0 # Full history for accurate analysis
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: ${{ inputs.pnpm-version }}
           run_install: false
           standalone: true
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: ${{ inputs.node-version }}
           cache: pnpm # Cache dependencies for speed
@@ -70,7 +70,7 @@ jobs:
       - name: Upload coverage
         # Make coverage reports available for review
         # Download from Actions tab to view detailed HTML report
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: coverage-${{ github.sha }}
           path: coverage/
@@ -80,19 +80,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           fetch-depth: 0 # Full history for accurate analysis
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
         with:
           version: ${{ inputs.pnpm-version }}
           run_install: false
           standalone: true
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: ${{ inputs.node-version }}
           cache: pnpm # Cache dependencies for speed
@@ -153,6 +153,14 @@ jobs:
         # FAILS IF: Workflow syntax errors or issues found
         # To debug: Run 'pnpm lint:workflows' locally
         run: pnpm lint:workflows
+
+      - name: Action pin check
+        # Every external `uses:` must be pinned to a full commit SHA with the
+        # release tag as a trailing comment, so a moved tag upstream cannot
+        # change what runs here or in the release pipeline
+        # FAILS IF: Any `uses:` references a tag or branch instead of a SHA
+        # To fix: Pin as `uses: owner/repo@<sha> # vX.Y.Z` (Dependabot keeps it current)
+        run: pnpm lint:action-pins
 
       - name: Fetch main branch for changesets
         if: inputs.validate-changesets
