@@ -3,12 +3,14 @@ set -euo pipefail
 
 # =============================================================================
 # Project Setup Script
-# Purpose: One-command setup for new developers
-# Usage: ./scripts/setup.sh [project-name]
+# Purpose: One-command setup for new contributors
+# Usage: ./scripts/setup.sh  (or: pnpm setup)
+#
+# Tool versions are not hardcoded here. They come from:
+#   - mise.toml          -> node / pnpm versions used for development and CI
+#   - package.json       -> packageManager (pnpm) and engines.node (consumer floor)
 # =============================================================================
 
-PROJECT_NAME="${1:-}"
-CURRENT_DIR="$(pwd)"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
@@ -41,51 +43,30 @@ if [[ ! -f "$PROJECT_ROOT/package.json" ]]; then
     error "Run this script from the project root directory"
 fi
 
+cd "$PROJECT_ROOT"
+
 log "Starting project setup..."
 
 # 1. Check prerequisites
 log "Checking prerequisites..."
 
-if ! command -v pnpm &> /dev/null; then
-    if command -v mise &> /dev/null; then
-        log "Installing pnpm via mise..."
-        mise install pnpm@10.15.1
-    else
-        error "pnpm not found. Please install pnpm 10.15.1 or install mise first."
+if command -v mise &> /dev/null; then
+    log "Installing toolchain from mise.toml..."
+    mise install
+else
+    if ! command -v node &> /dev/null; then
+        error "Node.js not found. Install the version pinned in mise.toml (or install mise first)."
+    fi
+    if ! command -v pnpm &> /dev/null; then
+        error "pnpm not found. Install the version pinned in package.json's packageManager field (or install mise first)."
     fi
 fi
 
-if ! command -v node &> /dev/null; then
-    if command -v mise &> /dev/null; then
-        log "Installing Node.js via mise..."
-        mise install node@22
-    else
-        error "Node.js not found. Please install Node.js 22+ or install mise first."
-    fi
-fi
-
-# 2. Install dependencies
+# 2. Install dependencies (the husky prepare hook runs automatically)
 log "Installing dependencies..."
 pnpm install
 
-# 3. Rename project if name provided
-if [[ -n "$PROJECT_NAME" ]]; then
-    log "Renaming project to '$PROJECT_NAME'..."
-    
-    # Update package.json
-    pnpm pkg set name="$PROJECT_NAME"
-    
-    # Update README.md title
-    sed -i.bak "s/# Agentic Node + TypeScript Starter/# $PROJECT_NAME/" README.md && rm README.md.bak
-    
-    info "Project renamed to '$PROJECT_NAME'. Update other references manually as needed."
-fi
-
-# 4. Initialize git hooks
-log "Setting up git hooks..."
-pnpm prepare
-
-# 5. Run initial verification
+# 3. Run initial verification
 log "Running initial verification..."
 if pnpm verify; then
     log "✅ All checks passed!"
@@ -93,27 +74,27 @@ else
     warn "Some checks failed. Fix issues before committing."
 fi
 
-# 6. Create initial build
+# 4. Create initial build
 log "Creating initial build..."
 pnpm build
 
-# 7. Show next steps
+# 5. Show next steps
 echo
 log "🎉 Setup complete!"
 echo
 info "Next steps:"
 echo "1. Open the project in your IDE (VS Code recommended)"
-echo "2. Review and customize package.json, README.md, and other files"
-echo "3. Start developing with: pnpm test:watch"
-echo "4. Create your first feature with: pnpm changeset"
+echo "2. Start developing with: pnpm test:watch"
+echo "3. Add a changeset for your change with: pnpm changeset"
 echo
 info "Available commands:"
 echo "  pnpm dev           # Start development mode"
 echo "  pnpm test:watch    # Run tests in watch mode"
-echo "  pnpm verify        # Run all quality checks"
+echo "  pnpm quick-check   # typecheck + lint + test (what pre-push runs)"
+echo "  pnpm verify        # Run all quality checks (what CI runs)"
 echo "  pnpm changeset     # Create a changeset for your changes"
 echo
 info "Documentation:"
-echo "  docs/GETTING_STARTED.md - Full setup guide"
-echo "  docs/PROCESS.md         - Development workflow"
-echo "  CLAUDE.md              - AI development tips"
+echo "  README.md            - Install, configuration and usage"
+echo "  AGENTS.md            - Tooling, commands, architecture and hooks"
+echo "  .github/WORKFLOWS.md - CI and release workflows"

@@ -34,8 +34,8 @@ jobs:
   # All checks run simultaneously for faster feedback
   # =============================================================================
 
-  # Core validation: audit, typecheck, lint, format, tests
-  # upload-coverage: true generates coverage reports for visibility
+  # Core validation: typecheck, lint, format, markdown/yaml/workflow lint, depcheck, tests
+  # Coverage is always generated and uploaded as a workflow artifact
   # FAILS IF: Any check fails or coverage drops below 80%
   validate:
     uses: ./.github/workflows/reusable-validate.yml

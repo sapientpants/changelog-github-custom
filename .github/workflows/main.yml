@@ -37,7 +37,8 @@ jobs:
   # =============================================================================
 
   validate:
-    # Reusable workflow handles: audit, typecheck, lint, format, tests
+    # Reusable workflow handles: typecheck, lint, format, markdown/yaml/workflow lint, depcheck, tests
+    # (pnpm audit runs in the security job below)
     # FAILS IF: Any check fails, tests don't meet 80% coverage threshold
     uses: ./.github/workflows/reusable-validate.yml
 
@@ -181,7 +182,7 @@ jobs:
               "build_time": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
               "node_version": "$(node --version)",
               "pnpm_version": "$(pnpm --version)",
-              "typescript_version": "$(pnpm list typescript --json | jq -r '.dependencies.typescript.version')",
+              "typescript_version": "$(pnpm list typescript --json | jq -r '.[0].devDependencies.typescript.version')",
               "files": $(find dist -type f -name "*.js" | jq -R . | jq -s .)
           }
           EOF
