@@ -53,13 +53,15 @@ log "Checking prerequisites..."
 if command -v mise &> /dev/null; then
     log "Installing toolchain from mise.toml..."
     mise install
-else
-    if ! command -v node &> /dev/null; then
-        error "Node.js not found. Install the version pinned in mise.toml (or install mise first)."
-    fi
-    if ! command -v pnpm &> /dev/null; then
-        error "pnpm not found. Install the version pinned in package.json's packageManager field (or install mise first)."
-    fi
+fi
+
+# Verify the tools are actually on PATH. With mise this fails when it is
+# installed but not activated in the current shell (see `mise activate`).
+if ! command -v node &> /dev/null; then
+    error "Node.js not found. Install the version pinned in mise.toml, or install and activate mise (https://mise.jdx.dev/getting-started.html)."
+fi
+if ! command -v pnpm &> /dev/null; then
+    error "pnpm not found. Install the version pinned in package.json's packageManager field, or install and activate mise."
 fi
 
 # 2. Install dependencies (the husky prepare hook runs automatically)
