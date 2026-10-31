@@ -8,15 +8,15 @@
 
 ## Key Commands
 
-| Command                | What it does                                                                                                       |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `pnpm verify`          | Full CI-equivalent set: audit, deps check, typecheck, lint (TS/ES/YAML/Markdown/workflows), format, tests+coverage |
-| `pnpm quick-check`     | Fast path: typecheck + lint + test (what `pre-push` runs)                                                          |
-| `pnpm build`           | Clean + ESM (`tsconfig.esm.json`) — single `tsc` invocation emits JS and declarations                              |
-| `pnpm test`            | `vitest run --reporter=verbose`                                                                                    |
-| `pnpm changeset`       | Create a changeset (generates file in `.changeset/`)                                                               |
-| `pnpm release`         | `changeset version && pnpm build`                                                                                  |
-| `pnpm release:publish` | `pnpm build && changeset publish`                                                                                  |
+| Command                | What it does                                                                                                                   |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `pnpm verify`          | Full CI-equivalent set: audit, deps check, typecheck, lint (TS/ES/YAML/Markdown/workflows/action pins), format, tests+coverage |
+| `pnpm quick-check`     | Fast path: typecheck + lint + test (what `pre-push` runs)                                                                      |
+| `pnpm build`           | Clean + ESM (`tsconfig.esm.json`) — single `tsc` invocation emits JS and declarations                                          |
+| `pnpm test`            | `vitest run --reporter=verbose`                                                                                                |
+| `pnpm changeset`       | Create a changeset (generates file in `.changeset/`)                                                                           |
+| `pnpm release`         | `changeset version && pnpm build`                                                                                              |
+| `pnpm release:publish` | `pnpm build && changeset publish`                                                                                              |
 
 ## Architecture
 
@@ -34,6 +34,7 @@
 - **Hooks are a convenience, not enforcement**: `--no-verify` skips them entirely and cannot be detected client-side. The full check set (`pnpm verify`) runs in CI on every PR/push, and branch protection on `main` is the gate
 - **Commit messages**: conventional commits via `@commitlint/config-conventional`
 - **Keep `verify` and CI in sync**: `reusable-validate.yml` + `reusable-security.yml` must run the same checks as the `verify` script
+- **Pinned actions**: every external `uses:` in `.github/` is pinned to a full commit SHA with the release tag as a trailing comment (`uses: owner/repo@<sha> # vX.Y.Z`); `pnpm lint:action-pins` fails otherwise, and Dependabot (`github-actions` ecosystem) bumps the SHA and comment together
 
 ## Constraints
 
