@@ -1,10 +1,5 @@
 #!/usr/bin/env sh
 
-# Check if --no-verify was used
-if [ "$GIT_NO_VERIFY" = "1" ]; then
-  echo "Error: --no-verify flag is not allowed. All commits must pass pre-commit hooks."
-  exit 1
-fi
-
-# Run the same checks as pre-commit
-pnpm precommit
+# Fast local gate before pushing. The full check set (`pnpm verify`) runs in CI;
+# branch protection on main is the enforcement point, not this hook.
+pnpm quick-check

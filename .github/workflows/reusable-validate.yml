@@ -1,6 +1,8 @@
 # =============================================================================
 # REUSABLE WORKFLOW: Code Validation Suite
-# PURPOSE: Run all quality checks (audit, typecheck, lint, format, test)
+# PURPOSE: Run all quality checks (typecheck, lint, format, markdown/yaml lint,
+#          depcheck, workflow lint, test). Mirrors `pnpm verify` (audit lives in
+#          reusable-security.yml). Keep this list and the `verify` script in sync.
 # USAGE: Called by PR and main workflows for consistent validation
 # OUTPUTS: Coverage reports when requested
 # =============================================================================
@@ -122,6 +124,24 @@ jobs:
         # FAILS IF: Any file not formatted
         # To fix: Run 'pnpm format:fix' to auto-format
         run: pnpm format
+
+      - name: Markdown linting
+        # Lint all markdown (README, AGENTS, .changeset, .github docs)
+        # FAILS IF: markdownlint rule violations
+        # To fix: Run 'pnpm lint:markdown:fix' for auto-fixable issues
+        run: pnpm lint:markdown
+
+      - name: YAML linting
+        # Validate non-workflow YAML files (workflows are covered by actionlint)
+        # FAILS IF: YAML syntax errors
+        # To debug: Run 'pnpm lint:yaml' locally
+        run: pnpm lint:yaml
+
+      - name: Dependency check
+        # Detect unused or missing dependencies in package.json
+        # FAILS IF: depcheck reports unused/missing dependencies
+        # To debug: Run 'pnpm deps:check' locally
+        run: pnpm deps:check
 
       - name: Install actionlint
         # Pinned, checksum-verified download shared with the release build job
