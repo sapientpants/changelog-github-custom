@@ -31,7 +31,7 @@ on:
 #   validate:
 #     uses: ./.github/workflows/reusable-validate.yml
 #     with:
-#       upload-coverage: true  # For PRs to show coverage
+#       validate-changesets: true  # For PRs: require a changeset on the branch
 
 jobs:
   test:

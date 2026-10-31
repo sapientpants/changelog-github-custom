@@ -1,8 +1,10 @@
 # =============================================================================
 # WORKFLOW: CodeQL Security Analysis
 # PURPOSE: Continuous security analysis for the default branch and pull requests
-# TRIGGERS: Push to main, Pull requests to main
+# TRIGGERS: Push to main, Pull requests to main, daily schedule
 # OUTPUTS: Security findings uploaded to GitHub Security tab
+# NOTE: CodeQL's JavaScript/TypeScript extractor works from source alone, so
+#       this workflow does not install pnpm, Node.js or project dependencies
 # =============================================================================
 
 name: CodeQL
@@ -32,23 +34,6 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0 # Full history for accurate analysis
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
-        with:
-          version: 11.20.0
-          run_install: false
-          standalone: true
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - name: Install dependencies
-        # Dependencies needed for accurate CodeQL analysis
-        run: pnpm install --frozen-lockfile
 
       # =============================================================================
       # CODEQL STATIC ANALYSIS

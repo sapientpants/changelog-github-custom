@@ -3,7 +3,7 @@
 ## Setup & Tooling
 
 - **Package manager**: pnpm 11.20.0 (enforced via `packageManager` field + `engine-strict=true` in `.npmrc`)
-- **Node**: >= 22 (enforced by `.npmrc` + `mise.toml`)
+- **Node**: >= 22.12 is the consumer floor (`engines.node`, enforced by `engine-strict=true` in `.npmrc`); `mise.toml` and CI pin Node 24 for development
 - **Install**: `pnpm install` (husky `prepare` hook runs automatically)
 
 ## Key Commands
@@ -37,6 +37,6 @@
 
 ## Constraints
 
-- No `.env` files — secrets managed via GitHub Actions repository secrets (`RELEASE_TOKEN`, `NPM_TOKEN`, etc.)
+- No `.env` files — the only GitHub Actions repository secret is `RELEASE_TOKEN` (npm publishing uses OIDC trusted publishing, so there is no `NPM_TOKEN`)
 - `overrides` in `pnpm-workspace.yaml` (not `package.json`) force patched versions of a few transitive devDependencies (glob, minimatch, re2js, katex) — check them before upgrading those packages, and drop an override once the upstream fix is released
 - ESLint uses type-checked rules on `src/**/*.ts` and `tests/**/*.ts` — `tsc` must pass before lint passes
