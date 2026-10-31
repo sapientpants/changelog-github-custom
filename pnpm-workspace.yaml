@@ -1,27 +1,5 @@
-allowBuilds:
-  '@appthreat/sqlite3': true
-  esbuild: true
-
 overrides:
-  tar: '>=7.5.19'
   'glob@<14.0.2': '>=14.0.2'
   'minimatch@>=10 <11.0.1': '>=11.0.1'
-  'sequelize@<6.37.8': '>=6.37.8'
-  'js-yaml': '4.3.2'
-  'read-yaml-file': '2.1.0'
-  'jsonata@<2.2.0': '>=2.2.0'
-  'body-parser@<2.2.1': '>=2.2.1'
-  'markdown-it@<14.3.1': '>=14.3.1'
-  'markdown-it@>=15.0.0 <15.0.3': '>=15.0.3'
-  'launch-editor@<2.14.2': '>=2.14.2'
-  'shell-quote@<1.11.0': '>=1.11.0'
-  'source-map-js@<1.2.2': '>=1.2.2'
   're2js@<2.8.7': '>=2.8.7'
-  'fast-uri@<3.1.9': '>=3.1.9 <4'
   'katex@<0.18.2': '>=0.18.2'
-  'yaml@<2.8.3': '>=2.8.3'
-  'uuid@<11.1.1': '>=11.1.1'
-  'undici@<7.29.0': '>=7.29.0'
-  'caniuse-lite': '1.0.30001806'
-  'electron-to-chromium': '1.5.408'
-  'update-browserslist-db': '1.2.3'
