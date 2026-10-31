@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from 'vitest';
 import type { NewChangesetWithCommit, ModCompWithPackage } from '@changesets/types';
 import { getCommitInfo, getPullRequestInfo } from '@changesets/get-github-info';
 import changelogFunctions from '../src/changelog-custom.js';
@@ -59,9 +59,23 @@ function dependency(name: string, newVersion: string): ModCompWithPackage {
 }
 
 describe('Custom Changelog Generator', () => {
+  let stderrWrite: MockInstance<typeof process.stderr.write>;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    stderrWrite = vi.spyOn(process.stderr, 'write').mockImplementation(() => true);
   });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  function expectLookupWarning(reason: string): void {
+    expect(stderrWrite).toHaveBeenCalledTimes(1);
+    expect(stderrWrite).toHaveBeenCalledWith(
+      `changelog-github-custom: GitHub lookup failed, writing entry without links: ${reason}\n`,
+    );
+  }
 
   describe('getDependencyReleaseLine', () => {
     it.each([
@@ -156,6 +170,7 @@ describe('Custom Changelog Generator', () => {
       expect(result).toBe(
         `- Updated dependencies [${commitInfo('def5678').markdownLink}]:\n  - package-a@1.2.3`,
       );
+      expectLookupWarning('Network error');
     });
   });
 
@@ -367,6 +382,7 @@ describe('Custom Changelog Generator', () => {
 
         expect(mockedGetCommitInfo).toHaveBeenCalledTimes(1);
         expect(result).toBe('\n\n- Fix: Test\n');
+        expectLookupWarning('Network error');
       });
 
       it('should render a plain line when the PR is not found', async () => {
@@ -394,6 +410,28 @@ describe('Custom Changelog Generator', () => {
         expect(mockedGetPullRequestInfo).toHaveBeenCalledTimes(1);
         expect(mockedGetCommitInfo).not.toHaveBeenCalled();
         expect(result).toBe('\n\n- Fix: Test\n');
+        expectLookupWarning('Network error');
+      });
+
+      it('should not warn when the lookup merely returns undefined', async () => {
+        mockedGetCommitInfo.mockResolvedValueOnce(undefined);
+
+        await changelogFunctions.getReleaseLine(changeset('Fix: Test', 'abc123'), 'patch', OPTIONS);
+
+        expect(stderrWrite).not.toHaveBeenCalled();
+      });
+
+      it('should stringify non-Error rejections in the warning', async () => {
+        mockedGetCommitInfo.mockRejectedValueOnce('boom');
+
+        const result = await changelogFunctions.getReleaseLine(
+          changeset('Fix: Test', 'abc123'),
+          'patch',
+          OPTIONS,
+        );
+
+        expect(result).toBe('\n\n- Fix: Test\n');
+        expectLookupWarning('boom');
       });
     });
   });

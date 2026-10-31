@@ -44,11 +44,19 @@ function requireRepo(options: unknown): Options {
  * GitHub lookups are best-effort: a changelog entry without links is better
  * than a failed `changeset version`. Any rejection degrades to `undefined`,
  * the same value the lookup returns when the object is not found.
+ *
+ * The failure is still reported on stderr: a missing `GITHUB_TOKEN`, a bad
+ * `repo` slug or a rate limit would otherwise silently produce a changelog
+ * without links.
  */
 async function safeLookup<T>(lookup: () => Promise<T | undefined>): Promise<T | undefined> {
   try {
     return await lookup();
-  } catch {
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    process.stderr.write(
+      `changelog-github-custom: GitHub lookup failed, writing entry without links: ${reason}\n`,
+    );
     return undefined;
   }
 }

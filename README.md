@@ -70,7 +70,7 @@ In GitHub Actions the workflow token works:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-Lookups are best-effort. If the API call fails or the PR or commit cannot be found, the entry is still written, just without links; `changeset version` does not abort.
+Lookups are best-effort. If the API call fails or the PR or commit cannot be found, the entry is still written, just without links; `changeset version` does not abort. A failed API call (for example a missing `GITHUB_TOKEN`) is reported on stderr so the missing links are not a surprise.
 
 ## Usage
 
